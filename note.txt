@@ -1,0 +1,133 @@
+MyphpAdmin Code SQL:
+
+-- Δημιουργία Database
+CREATE DATABASE project_system;
+USE project_system;
+
+-- Πίνακας για Projects (απλοποιημένος)
+CREATE TABLE projects (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(255) NOT NULL,
+    description TEXT,
+    status ENUM('active', 'planning', 'completed') DEFAULT 'planning',
+    members INT DEFAULT 1,
+    date VARCHAR(50),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Πίνακας για Users μέσα στα Projects (αποθηκεύουμε usernames)
+CREATE TABLE project_users (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    project_id INT NOT NULL,
+    username VARCHAR(255) NOT NULL,
+    FOREIGN KEY (project_id) REFERENCES projects(id) ON DELETE CASCADE
+);
+
+-- Πίνακας για Comments
+CREATE TABLE project_comments (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    project_id INT NOT NULL,
+    author VARCHAR(255) NOT NULL,
+    comment_text TEXT NOT NULL,
+    comment_date VARCHAR(50),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (project_id) REFERENCES projects(id) ON DELETE CASCADE
+);
+
+-- Πίνακας για Files
+CREATE TABLE project_files (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    project_id INT NOT NULL,
+    filename VARCHAR(255) NOT NULL,
+    filesize VARCHAR(50),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (project_id) REFERENCES projects(id) ON DELETE CASCADE
+);
+
+-- Sample Data για testing
+INSERT INTO projects (name, description, status, members, date) VALUES
+('Website Redesign', 'Revamping the company homepage with new branding.', 'active', 3, 'Oct 24'),
+('Q4 Marketing Campaign', 'Planning social media assets and ad spend.', 'planning', 5, 'Nov 01'),
+('Mobile App Launch', 'Final testing and submission to App Store.', 'completed', 2, 'Sep 15');
+
+
+-----------------------------------
+
+function saveProject() {
+            const newName = nameInput.value.trim();
+            const newStatus = statusInput.value;
+            const newDesc = descInput.value.trim();
+
+            if(!newName) return alert("Project name is required");
+
+            const selectedUsers = selectedUserIds.map(id => 
+                availableUsers.find(u => u.id === id).name
+            );
+
+            if (currentId) {
+                const index = projects.findIndex(p => p.id === currentId);
+                projects[index].name = newName;
+                projects[index].status = newStatus;
+                projects[index].desc = newDesc;
+                projects[index].users = selectedUsers;
+                projects[index].comments = JSON.parse(JSON.stringify(projectComments));
+                projects[index].files = JSON.parse(JSON.stringify(projectFiles));
+                projects[index].members = selectedUsers.length || 1;
+            } else {
+                const newProject = {
+                    id: Date.now(),
+                    name: newName,
+                    status: newStatus,
+                    desc: newDesc,
+                    members: selectedUsers.length || 1,
+                    date: "Just now",
+                    users: selectedUsers,
+                    comments: JSON.parse(JSON.stringify(projectComments)),
+                    files: JSON.parse(JSON.stringify(projectFiles))
+                };
+                projects.unshift(newProject);
+            }
+
+            renderProjects();
+            closeModal();
+        }
+
+        ----------------------
+
+        function openModal(project = null) {
+            modal.classList.add('active');
+            isExpanded = false;
+            modalContent.classList.remove('expanded');
+            extendedInfo.classList.add('hidden');
+            toggleBtnText.textContent = 'Add More Details';
+
+            selectedUserIds = [];
+            projectComments = [];
+            projectFiles = [];
+
+            if (project) {
+                currentId = project.id;
+                modalTitle.innerText = "Edit Project";
+                nameInput.value = project.name;
+                statusInput.value = project.status;
+                descInput.value = project.desc;
+
+                if (project.users) {
+                    selectedUserIds = availableUsers
+                        .filter(u => project.users.includes(u.name))
+                        .map(u => u.id);
+                }
+                if (project.comments) projectComments = JSON.parse(JSON.stringify(project.comments));
+                if (project.files) projectFiles = JSON.parse(JSON.stringify(project.files));
+            } else {
+                currentId = null;
+                modalTitle.innerText = "New Project";
+                nameInput.value = "";
+                statusInput.value = "planning";
+                descInput.value = "";
+            }
+
+            loadModalFiles();
+            loadModalComments();
+        }
+
