@@ -139,12 +139,11 @@
     .calendar-title {
         font-size: 28px;
         font-weight: 700;
-        /* Το βασικό χρώμα του Add Event (#4c64ff) */
-        color: #4c64ff; 
-        background: none;
-        -webkit-background-clip: initial;
-        -webkit-text-fill-color: initial;
-        background-clip: border-box;
+        color: var(--text-dark);
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
     }
 
     /* ========================================
@@ -202,8 +201,7 @@
     }
 
     .today-btn {
-        /* Ανοιχτό/Βασικό χρώμα (#4c64ff) */
-        background: #4c64ff; 
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         color: var(--white);
         border: none;
         padding: 10px 24px;
@@ -211,7 +209,6 @@
         letter-spacing: 0.5px;
         position: relative;
         overflow: hidden;
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
     .today-btn::before {
@@ -221,19 +218,18 @@
         left: -100%;
         width: 100%;
         height: 100%;
-        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
-        transition: left 0.6s ease;
-    }
-
-    .today-btn:hover {
-        background: #3d52cc; 
-        transform: translateY(-3px) scale(1.05);
-        /* Σκιά στο ίδιο χρώμα */
-        box-shadow: 0 8px 20px rgba(76, 100, 255, 0.4); 
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+        transition: left 0.5s;
     }
 
     .today-btn:hover::before {
         left: 100%;
+    }
+
+    .today-btn:hover {
+        background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+        transform: translateY(-3px) scale(1.05);
+        box-shadow: 0 8px 20px rgba(118, 75, 162, 0.4);
     }
 
     .today-btn:hover .fa-calendar-day {
@@ -797,155 +793,25 @@
 
 
 
-    /* ========================================
-       MOBILE RESPONSIVE (Κινητά - 3 Στήλες)
+     /* ========================================
+       MOBILE RESPONSIVE (Κινητά)
        ======================================== */
     @media (max-width: 768px) {
-        
-        /* --- 1. Γενικές Ρυθμίσεις --- */
-        body, html {
-            overflow-x: hidden; /* Απαγορεύουμε το οριζόντιο κούνημα */
-        }
-
-        .main-content {
-            width: 100vw;
-        }
-
-        .content-area {
-            padding: 10px;
-            padding-bottom: 80px; /* Χώρος κάτω για να μη κρύβεται τίποτα */
-        }
-
-       /* --- 2. Κεντρικό Header (Header όπως στο Project) --- */
-        header .max-w-7xl {
-            display: flex !important;
-            flex-direction: row !important; /* Αυστηρά σε μία ευθεία */
-            flex-wrap: nowrap !important;   /* Απαγορεύεται να κατέβει κάτω */
-            align-items: center !important;
-            justify-content: space-between !important;
-            gap: 5px; 
-            padding-right: 0; /* Κερδίζουμε λίγο χώρο δεξιά */
-        }
-
-        /* Τίτλος: Τον μικραίνουμε ελάχιστα για να χωράει */
-        header h1.text-2xl {
-            font-size: 18px !important;
-            white-space: nowrap;      /* Όχι αλλαγή γραμμής */
-            overflow: hidden;         /* Αν είναι τεράστιος, κόβεται */
-            text-overflow: ellipsis;
-            margin-right: auto;       /* Σπρώχνει τα δεξιά στοιχεία στην άκρη */
-        }
-
-        /* ΚΡΥΒΟΥΜΕ το μικρό εικονίδιο (φίλτρο) δίπλα στο κουμπί 
-           για να αφήσουμε χώρο για το Μεγάλο Κουμπί */
-        header .flex.items-center.space-x-4 > button:first-child {
-            display: none !important;
-        }
-
-        /* Το κουμπί Add Event: Μεγάλο, Μπλε και Ολόκληρο */
-        #new-event-button {
-            display: flex !important;
-            align-items: center;
-            justify-content: center;
-            
-            /* Στυλ "Μεγάλου Κουμπιού" */
-            width: auto !important;     /* Όχι όλο το πλάτος, όσο χρειάζεται */
-            padding: 8px 16px !important; /* Άνετο padding */
-            font-size: 14px !important;
-            white-space: nowrap !important; /* Να φαίνεται όλο το κείμενο "Add Event" */
-            
-            /* Να μην ζουλιέται */
-            flex-shrink: 0; 
-            margin-left: 5px;
-        }
-        
-        /* Κρύβουμε το εικονίδιο (+) μέσα στο κουμπί αν θέλουμε πιο καθαρό look, 
-           αλλιώς το αφήνουμε. Εδώ το αφήνω για να μοιάζει με το Project. */
-        #new-event-button svg {
-            display: block; 
-            margin-right: 5px;
-        }
-        
-        /* Κρύβουμε το κείμενο "Add Event" και αφήνουμε μόνο το εικονίδιο αν δεν χωράει */
-        #new-event-button {
-            padding: 8px 12px;
-            font-size: 13px;
-            white-space: nowrap;
-        }
-
-        /* --- 3. Calendar Header (Μήνας & Κουμπιά) --- */
+        /* Αλλαγή διάταξης στο Calendar Header */
         .calendar-header {
-            flex-direction: column; /* Κάθετη διάταξη */
-            gap: 15px;
-            padding: 15px 10px;
-            align-items: center;
-        }
-
-        /* Ο Μήνας πάνω μόνος του */
-        .calendar-title {
-            font-size: 22px;
-            text-align: center;
-            width: 100%;
-        }
-
-        /* Τα κουμπιά σε ΜΙΑ ΕΥΘΕΙΑ από κάτω */
-        .calendar-nav {
-            display: flex;
-            width: 100%;
-            justify-content: space-between; /* Άκρη-άκρη */
-            gap: 10px;
-        }
-
-        .nav-btn {
-            flex: 1; /* Να πιάνουν ίσο χώρο */
-            justify-content: center;
-            padding: 10px 5px;
-            font-size: 13px;
-        }
-
-        /* --- 4. Πλέγμα Ημερολογίου (3 Στήλες) --- */
-        .calendar-grid-container {
-            padding: 10px 5px;
-            border: none;
-            box-shadow: none;
-            background: transparent;
-        }
-
-        /* ΚΡΥΒΟΥΜΕ τις μέρες της εβδομάδας (Mon, Tue...) γιατί δεν ταιριάζουν με 3 στήλες */
-        .calendar-weekdays {
-            display: none;
-        }
-
-        .calendar-grid {
-            display: grid;
-            /* ΤΟ ΖΗΤΟΥΜΕΝΟ: 3 Στήλες */
-            grid-template-columns: repeat(3, 1fr) !important; 
-            gap: 8px;
-            min-height: auto;
-            min-width: unset; /* Αφαιρούμε το πλάτος για να χωράει στην οθόνη */
-        }
-
-        .calendar-day {
-            min-height: 100px; /* Ύψος κάθε ημέρας */
-            padding: 8px;
-            display: flex;
             flex-direction: column;
-            justify-content: flex-start;
+            gap: 15px;
+            padding: 15px;
         }
 
-        .day-number {
-            font-size: 16px;
-            align-self: flex-start;
+        .calendar-nav {
+            width: 100%;
+            justify-content: space-between;
         }
 
-        /* Μικραίνουμε τα events για να χωράνε */
-        .event-dot {
-            font-size: 10px;
-            padding: 3px 6px;
-            margin-bottom: 2px;
-        }
-
-        /* --- 5. Modal Styles (Αμετάβλητα για σωστή λειτουργία) --- */
+        /* --- MODAL MOBILE STYLES --- */
+        
+        /* 1. Το παράθυρο πιάνει σχεδόν όλη την οθόνη */
         .modal-content {
             width: 95% !important;
             max-width: 95% !important;
@@ -953,29 +819,40 @@
             margin: auto;
         }
 
+        /* 2. Τα πεδία μπαίνουν το ένα κάτω από το άλλο (όχι δίπλα-δίπλα) */
         .form-row {
             grid-template-columns: 1fr !important;
             gap: 15px;
         }
 
-        .modal-header, .modal-body, .modal-footer {
+        /* 3. Μικραίνουμε τα περιθώρια (padding) */
+        .modal-header,
+        .modal-body,
+        .modal-footer {
             padding: 15px !important;
         }
-        
+
+        .modal {
+            align-items: flex-end; /* Σε πολύ μικρά κινητά, ίσως βολεύει να ξεκινάει από κάτω, αλλά εδώ το κρατάμε κεντραρισμένο */
+        }
+
+        /* 4. Scroll μόνο στη μέση, τα κουμπιά μένουν σταθερά κάτω */
         .modal-body {
-            max-height: calc(90vh - 130px);
+            max-height: calc(90vh - 130px); /* Ύψος οθόνης μείον header/footer */
             overflow-y: auto;
         }
 
-        .modal-footer {
-            flex-direction: column-reverse;
-            gap: 10px;
-        }
-        
+        /* 5. Μεγαλύτερα κουμπιά για ευκολότερο πάτημα με το δάχτυλο */
         .btn-primary, .btn-outline {
-            width: 100%;
+            padding: 12px 20px;
+            width: 100%; /* Τα κουμπιά πιάνουν όλο το πλάτος */
             justify-content: center;
             display: flex;
+        }
+        
+        .modal-footer {
+            flex-direction: column-reverse; /* Το Save πάει πάνω, το Cancel κάτω */
+            gap: 10px;
         }
     }
 </style>
@@ -984,7 +861,7 @@
 <body class="bg-light-bg font-sans min-h-screen flex">
 
         <!-- Sidebar -->
-    <div id="sidebar" class="sidebar fixed inset-y-0 left-0 w-64 bg-sidebar-bg p-4 flex flex-col border-r border-gray-100 lg:relative lg:translate-x-0 transform -translate-x-full transition-transform duration-300 z-50 overflow-y-auto">
+    <div id="sidebar" class="sidebar">
         <div class="mb-8 font-bold text-xl text-primary-blue">Project</div>
         
         <nav class="flex-grow">
@@ -1043,29 +920,18 @@
 
 
     <!-- Main Content -->
-    <div id="main-content" class="flex-1 flex flex-col">
+    <div id="main-content" class="main-content">
         <!-- Header -->
         <header class="bg-card-bg p-4 sticky top-0 z-40 shadow-sm border-b border-gray-100">
             <div class="max-w-7xl mx-auto flex justify-between items-center">
                 <div class="flex items-center">
-                    <button id="menu-button" class="lg:hidden p-2 rounded-md text-text-primary mr-3 hover:bg-light-bg">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
-                        </svg>
-                    </button>
                     <h1 class="text-2xl font-semibold text-text-primary">Calendar & Events</h1>
                 </div>
                 
                 <div class="flex items-center space-x-4">
-                    <button class="p-2 rounded-full text-text-secondary hover:bg-light-bg">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
-                        </svg>
-                    </button>
-                    
-                    <button id="new-event-button" class="flex items-center bg-primary-blue text-white py-2 px-4 rounded-xl font-medium shadow-md hover:bg-indigo-700 transition duration-150" onclick="openModal()">
-                        <svg class="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                    <button onclick="openModal()" class="nav-btn">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
                         </svg>
                         Add Event
                     </button>
@@ -1114,107 +980,113 @@
            <!-- Event Modal -->
     <div class="modal" id="eventModal">
         <div class="modal-content">
-            <div class="modal-header">
-                <h2 class="modal-title" id="modalTitle">Add Event</h2>
-                <button class="close-modal" onclick="closeModal()">
-                    <i class="fa-solid fa-xmark"></i>
-                </button>
-            </div>
+            <span class="close-modal" onclick="closeModal()">×</span>
+            <h2 class="modal-title" id="modalTitle">Add Event</h2>
             
-            <div class="modal-body">
-                <form id="eventForm" onsubmit="return false;">
+            <form id="eventForm" onsubmit="return false;">
+                <!-- Title -->
+                <div class="form-group">
+                    <label class="form-label">Title *</label>
+                    <input type="text" class="form-input" id="inputTitle" placeholder="Event title" required>
+                </div>
+
+                <!-- Description -->
+                <div class="form-group">
+                    <label class="form-label">Description</label>
+                    <textarea class="form-textarea" id="inputDescription" placeholder="Event description"></textarea>
+                </div>
+
+                <!-- Event Type & Priority -->
+                <div class="form-row">
                     <div class="form-group">
-                        <label class="form-label">Title *</label>
-                        <input type="text" class="form-input" id="inputTitle" placeholder="Event title" required>
-                    </div>
-
-                    <div class="form-group">
-                        <label class="form-label">Description</label>
-                        <textarea class="form-textarea" id="inputDescription" placeholder="Event description"></textarea>
-                    </div>
-
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label class="form-label">Event Type *</label>
-                            <select class="form-select" id="inputEventType">
-                                <option value="task">Task</option>
-                                <option value="meeting">Meeting</option>
-                                <option value="reminder">Reminder</option>
-                                <option value="deadline">Deadline</option>
-                            </select>
-                        </div>
-
-                        <div class="form-group">
-                            <label class="form-label">Priority</label>
-                            <select class="form-select" id="inputPriority">
-                                <option value="low">Low</option>
-                                <option value="medium" selected>Medium</option>
-                                <option value="high">High</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label class="form-label">Start Date *</label>
-                            <input type="date" class="form-input" id="inputStartDate" required>
-                        </div>
-
-                        <div class="form-group">
-                            <label class="form-label">End Date</label>
-                            <input type="date" class="form-input" id="inputEndDate">
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <div class="checkbox-group">
-                            <input type="checkbox" id="inputAllDay" onchange="toggleTimeFields()">
-                            <label for="inputAllDay" style="font-weight: normal; cursor: pointer;">All Day Event</label>
-                        </div>
-                    </div>
-
-                    <div class="form-row" id="timeFields">
-                        <div class="form-group">
-                            <label class="form-label">Start Time</label>
-                            <input type="time" class="form-input" id="inputStartTime">
-                        </div>
-
-                        <div class="form-group">
-                            <label class="form-label">End Time</label>
-                            <input type="time" class="form-input" id="inputEndTime">
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label class="form-label">Status</label>
-                        <select class="form-select" id="inputStatus">
-                            <option value="pending" selected>Pending</option>
-                            <option value="in-progress">In Progress</option>
-                            <option value="completed">Completed</option>
-                            <option value="cancelled">Cancelled</option>
+                        <label class="form-label">Event Type *</label>
+                        <select class="form-select" id="inputEventType">
+                            <option value="task">Task</option>
+                            <option value="meeting">Meeting</option>
+                            <option value="reminder">Reminder</option>
+                            <option value="deadline">Deadline</option>
                         </select>
                     </div>
 
                     <div class="form-group">
-                        <label class="form-label">Assign To</label>
-                        <select class="form-select" id="inputAssignedTo">
-                            <option value="">-- None --</option>
-                            </select>
+                        <label class="form-label">Priority</label>
+                        <select class="form-select" id="inputPriority">
+                            <option value="low">Low</option>
+                            <option value="medium" selected>Medium</option>
+                            <option value="high">High</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Start Date & End Date -->
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Start Date *</label>
+                        <input type="date" class="form-input" id="inputStartDate" required>
                     </div>
 
                     <div class="form-group">
-                        <label class="form-label">Link to Project</label>
-                        <select class="form-select" id="inputProjectId">
-                            <option value="">-- None --</option>
-                            </select>
+                        <label class="form-label">End Date</label>
+                        <input type="date" class="form-input" id="inputEndDate">
                     </div>
-                </form>
-            </div>
+                </div>
 
-            <div class="modal-footer">
-                <button type="button" class="btn-outline" onclick="closeModal()">Cancel</button>
-                <button type="button" class="btn-primary" onclick="saveEvent()">Save Event</button>
-            </div>
+                <!-- All Day Checkbox -->
+                <div class="form-group">
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="inputAllDay" onchange="toggleTimeFields()">
+                        <label for="inputAllDay" style="font-weight: normal; cursor: pointer;">All Day Event</label>
+                    </div>
+                </div>
+
+                <!-- Start Time & End Time -->
+                <div class="form-row" id="timeFields">
+                    <div class="form-group">
+                        <label class="form-label">Start Time</label>
+                        <input type="time" class="form-input" id="inputStartTime">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">End Time</label>
+                        <input type="time" class="form-input" id="inputEndTime">
+                    </div>
+                </div>
+
+                <!-- Status -->
+                <div class="form-group">
+                    <label class="form-label">Status</label>
+                    <select class="form-select" id="inputStatus">
+                        <option value="pending" selected>Pending</option>
+                        <option value="in-progress">In Progress</option>
+                        <option value="completed">Completed</option>
+                        <option value="cancelled">Cancelled</option>
+                    </select>
+                </div>
+
+                <!-- Assign To (Team Member) -->
+                <div class="form-group">
+                    <label class="form-label">Assign To</label>
+                    <select class="form-select" id="inputAssignedTo">
+                        <option value="">-- None --</option>
+                        <!-- Team members will be loaded here -->
+                    </select>
+                </div>
+
+                <!-- Link to Project -->
+                <div class="form-group">
+                    <label class="form-label">Link to Project</label>
+                    <select class="form-select" id="inputProjectId">
+                        <option value="">-- None --</option>
+                        <!-- Projects will be loaded here -->
+                    </select>
+                </div>
+
+                <!-- Actions -->
+                <div class="modal-actions">
+                    <button type="button" class="btn-outline" onclick="closeModal()">Cancel</button>
+                    <button type="button" class="btn-primary" onclick="saveEvent()">Save Event</button>
+                </div>
+            </form>
         </div>
     </div>
 
@@ -1276,31 +1148,6 @@
         const monthNames = ['January', 'February', 'March', 'April', 'May', 'June',
                            'July', 'August', 'September', 'October', 'November', 'December'];
 
-        // --- SIDEBAR TOGGLE LOGIC ---
-        const menuButton = document.getElementById('menu-button');
-        const sidebar = document.getElementById('sidebar');
-
-        // Όταν πατάμε το κουμπί, αλλάζουμε την κλάση που κρύβει το sidebar
-        if (menuButton) {
-            menuButton.addEventListener('click', (e) => {
-                e.stopPropagation(); // Σταματάει το κλικ από το να πάει στο document
-                sidebar.classList.toggle('-translate-x-full');
-            });
-        }
-
-        // Προαιρετικό: Να κλείνει το sidebar αν κάνουμε κλικ έξω από αυτό (στα κινητά)
-        document.addEventListener('click', (e) => {
-            // Αν το sidebar είναι ανοιχτό (δεν έχει την κλάση -translate-x-full)
-            // ΚΑΙ το κλικ ΔΕΝ έγινε μέσα στο sidebar
-            // ΚΑΙ είμαστε σε κινητό (οθόνη μικρότερη από 1024px)
-            if (!sidebar.classList.contains('-translate-x-full') && 
-                !sidebar.contains(e.target) && 
-                window.innerWidth < 1024) {
-                
-                sidebar.classList.add('-translate-x-full');
-            }
-        });
-
         // Load Events
         async function loadEvents() {
             try {
@@ -1352,7 +1199,6 @@
             }
         }
 
-       
         // Create Day Element
         function createDayElement(day, isOtherMonth, monthOffset) {
             const dayElement = document.createElement('div');
@@ -1405,10 +1251,10 @@
                 const eventDot = document.createElement('div');
                 eventDot.className = `event-dot ${event.event_type}`;
                 eventDot.textContent = event.title;
-                
-                // --- ΑΛΛΑΓΗ 1: Αφαιρέσαμε το onclick εδώ ---
-                // Πλέον δεν ανοίγει το Edit Modal, αλλά αφήνει το κλικ να περάσει στο κουτί
-                
+                eventDot.onclick = (e) => {
+                    e.stopPropagation();
+                    openModal(event);
+                };
                 eventsContainer.appendChild(eventDot);
             });
 
@@ -1417,19 +1263,24 @@
                 const moreText = document.createElement('div');
                 moreText.className = 'more-events';
                 moreText.textContent = `+${dayEvents.length - maxVisible} more`;
-                
-                // --- ΑΛΛΑΓΗ 2: Αφαιρέσαμε το onclick και εδώ ---
-                
+                moreText.onclick = (e) => {
+                    e.stopPropagation();
+                    showDayEvents(dateStr, dayEvents);
+                };
                 eventsContainer.appendChild(moreText);
             }
 
             dayElement.appendChild(eventsContainer);
 
-            // Click handler for the WHOLE box (Day Click)
+            // Click to add event
             dayElement.onclick = (e) => {
                 if (!isOtherMonth) {
-                    // --- ΑΛΛΑΓΗ 3: Αφαιρέσαμε τους ελέγχους (if target is event-dot return...) ---
-                    // Τώρα, ό,τι και να πατήσεις μέσα στο κουτί, εκτελείται αυτός ο κώδικας
+                    // Don't open modal if clicking on event dot or more text
+                    if (e.target.classList.contains('event-dot') || 
+                        e.target.classList.contains('more-events')) {
+                        return;
+                    }
+                    // Open day modal to show all events
                     showDayEvents(dateStr, dayEvents);
                 }
             };
@@ -1437,35 +1288,7 @@
             return dayElement;
         }
 
-        // Χρώματα ανάλογα με τον τύπο του event
-        const eventColors = {
-            'task': '#4c64ff',      // Μπλε
-            'meeting': '#10b981',   // Πράσινο
-            'reminder': '#f59e0b',  // Πορτοκαλί
-            'deadline': '#ef4444'   // Κόκκινο
-        };
-
-        // Συνάρτηση για Edit μέσα από το Day Modal
-        function editEventFromDay(id) {
-            // Βρίσκουμε το event από τη λίστα με βάση το ID
-            const event = events.find(e => e.id == id);
-            if (event) {
-                closeDayModal(); // Κλείνουμε το παράθυρο ημέρας
-                openModal(event); // Ανοίγουμε το παράθυρο επεξεργασίας
-            }
-        }
-
-        // Συνάρτηση για Delete μέσα από το Day Modal
-        function deleteEventFromDay(id) {
-                    if (confirm('Are you sure you want to delete this event?')) {
-                        // Χρησιμοποιούμε την υπάρχουσα λογική διαγραφής
-                        deleteEvent(id).then(() => {
-                            closeDayModal(); // Κλείνουμε το παράθυρο ημέρας μετά τη διαγραφή
-                        });
-                    }
-                }
-
-                // Show all events for a day (you can implement a side panel or modal)
+        // Show all events for a day (you can implement a side panel or modal)
         function showDayEvents(date, dayEvents) {
             const dateObj = new Date(date + 'T00:00:00');
             const formattedDate = dateObj.toLocaleDateString('en-US', { 
@@ -1475,7 +1298,7 @@
                 day: 'numeric' 
             });
 
-            // Τίτλος και υπότιτλος
+            // Set modal title
             document.getElementById('dayModalTitle').textContent = formattedDate;
             document.getElementById('dayModalSubtitle').textContent = 
                 dayEvents.length === 0 ? 'No events' : 
@@ -1494,23 +1317,17 @@
                 container.style.display = 'grid';
                 noEventsMsg.style.display = 'none';
                 
-                dayEvents.forEach((event) => {
-                    // 1. Βρίσκουμε το σωστό χρώμα
-                    const color = eventColors[event.event_type] || '#4c64ff';
-                    
+                dayEvents.forEach((event, index) => {
                     const eventCard = document.createElement('div');
                     eventCard.className = 'day-event-card';
+                    eventCard.style.borderLeftColor = event.color || '#4c64ff';
                     
-                    // 2. Εφαρμόζουμε το χρώμα στο αριστερό περιθώριο
-                    eventCard.style.borderLeftColor = color;
-                    
-                    const time = event.all_day == 1 ? 'All Day' : 
+                    const time = event.all_day ? 'All Day' : 
                         (event.start_time ? event.start_time.substring(0, 5) : 'No time');
                     
-                    // 3. Διορθωμένο HTML με σωστά χρώματα και λειτουργικά κουμπιά
                     eventCard.innerHTML = `
                         <div class="day-event-header">
-                            <div class="day-event-time" style="color: ${color}; background: ${color}15;">
+                            <div class="day-event-time">
                                 <i class="far fa-clock"></i>
                                 ${time}
                             </div>
@@ -1527,14 +1344,9 @@
                         ${event.description ? `<div class="day-event-description">${event.description}</div>` : ''}
                         <div class="day-event-meta">
                             <div class="day-event-meta-item">
-                                <i class="fas fa-circle" style="color: ${color}; font-size: 8px;"></i>
-                                <span style="text-transform: capitalize;">${event.event_type}</span>
+                                <i class="fas fa-circle" style="color: ${event.color || '#4c64ff'}; font-size: 8px;"></i>
+                                ${event.category || 'General'}
                             </div>
-                            ${event.assigned_name ? `
-                            <div class="day-event-meta-item">
-                                <i class="fas fa-user" style="font-size: 10px;"></i>
-                                ${event.assigned_name}
-                            </div>` : ''}
                         </div>
                     `;
                     
@@ -1542,7 +1354,7 @@
                 });
             }
             
-            // Εμφάνιση Modal
+            // Open the modal
             document.getElementById('dayModal').style.display = 'flex';
         }
 
@@ -1688,13 +1500,8 @@
 
         // Delete Event (called from event dot right-click or dropdown)
         async function deleteEvent(eventId) {
-            // Αν καλείται απευθείας (όχι από το FromDay), ρωτάμε επιβεβαίωση
-            // Αν καλείται από το deleteEventFromDay, η επιβεβαίωση έχει ήδη γίνει, 
-            // αλλά δεν πειράζει να υπάρχει διπλή ασφάλεια ή μπορούμε να το αφαιρέσουμε από εδώ.
-            // Για να μην μπερδευτούμε, αφήνουμε τον κώδικα όπως είναι αλλά βάζουμε return.
-            
-            /* ... υπάρχων κώδικας ... */
-            
+            if (!confirm('Are you sure you want to delete this event?')) return;
+
             try {
                 const response = await fetch('calendar_handler.php?action=deleteEvent', {
                     method: 'POST',
@@ -1705,16 +1512,13 @@
 
                 if (result.success) {
                     await loadEvents();
-                    closeModal(); // Κλείνει το Edit Modal αν είναι ανοιχτό
-                    return true; // ΕΠΙΣΤΡΟΦΗ ΕΠΙΤΥΧΙΑΣ
+                    closeModal();
                 } else {
                     alert('Failed to delete event!');
-                    return false;
                 }
             } catch (error) {
                 console.error('Error deleting event:', error);
                 alert('Failed to delete event!');
-                return false;
             }
         }
 
