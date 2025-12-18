@@ -37,7 +37,6 @@
         --white: #ffffff;
         --border: #dfe6e9;
         --shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-        --modal-overlay: rgba(0, 0, 0, 0.5);
         
         /* Event colors */
         --task-color: #4c64ff;
@@ -60,7 +59,10 @@
         overflow: hidden;
     }
 
-    /* Sidebar */
+    /* ========================================
+       SIDEBAR
+       ======================================== */
+
     .sidebar {
         width: 260px;
         background-color: var(--white);
@@ -73,16 +75,16 @@
     }
 
     .menu-item {
-        padding: 10px 12px;
-        border-radius: 10px;
+        padding: 12px 15px;
+        border-radius: 8px;
         cursor: pointer;
         transition: 0.3s;
         display: flex;
         align-items: center;
-        gap: 10px;
-        margin-bottom: 4px;
+        gap: 12px;
+        margin-bottom: 5px;
         text-decoration: none;
-        color: var(--text-secondary);
+        color: var(--text-light);
         font-size: 14px;
     }
 
@@ -90,11 +92,20 @@
         background-color: #f3f4f6;
     }
 
+    .menu-item.active {
+        background-color: #e0e7ff;
+        color: var(--primary-color);
+    }
+
     .menu-item svg {
         flex-shrink: 0;
         width: 18px;
         height: 18px;
     }
+
+    /* ========================================
+       MAIN CONTENT
+       ======================================== */
 
     .main-content {
         flex: 1;
@@ -109,86 +120,131 @@
         height: 100%;
     }
 
-    /* Calendar Header */
+    /* ========================================
+       CALENDAR HEADER
+       ======================================== */
+
     .calendar-header {
         display: flex;
         justify-content: space-between;
         align-items: center;
         margin-bottom: 30px;
-        background: var(--white);
-        padding: 20px 30px;
-        border-radius: 16px;
-        box-shadow: var(--shadow);
+        background: linear-gradient(135deg, #f5f7fa 0%, #ffffff 100%);
+        padding: 25px 35px;
+        border-radius: 20px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+        border: 1px solid rgba(255, 255, 255, 0.8);
     }
 
     .calendar-title {
-        font-size: 26px;
+        font-size: 28px;
         font-weight: 700;
         color: var(--text-dark);
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
     }
+
+    /* ========================================
+       CALENDAR NAVIGATION
+       ======================================== */
 
     .calendar-nav {
         display: flex;
-        gap: 10px;
+        gap: 12px;
+        align-items: center;
     }
 
     .nav-btn {
-        background: var(--primary-color);
-        color: var(--white);
-        border: none;
-        padding: 10px 20px;
-        border-radius: 10px;
+        background: var(--white);
+        color: var(--primary-color);
+        border: 2px solid #e5e7eb;
+        padding: 10px 18px;
+        border-radius: 50px;
         cursor: pointer;
         font-size: 14px;
         font-weight: 600;
-        transition: all 0.3s;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         display: flex;
         align-items: center;
         gap: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
     }
 
     .nav-btn:hover {
-        background: var(--primary-hover);
-        transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(76, 100, 255, 0.3);
+        background: var(--primary-color);
+        color: var(--white);
+        border-color: var(--primary-color);
+        transform: translateY(-3px) scale(1.02);
+        box-shadow: 0 8px 16px rgba(76, 100, 255, 0.25);
     }
 
-        .menu-item {
-            padding: 12px 15px;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: 0.3s;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 5px;
-        }
+    .nav-btn:active {
+        transform: translateY(-1px) scale(0.98);
+    }
 
-        .menu-item:hover, .menu-item.active {
-            background-color: rgba(255, 255, 255, 0.1);
-            color: var(--white);
-        }
+    .nav-btn i {
+        transition: transform 0.3s ease;
+    }
 
+    .nav-btn:hover i {
+        transform: scale(1.2);
+    }
 
-        .main-content {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-        }
+    .nav-btn:hover .fa-chevron-left {
+        transform: translateX(-3px) scale(1.2);
+    }
+
+    .nav-btn:hover .fa-chevron-right {
+        transform: translateX(3px) scale(1.2);
+    }
 
     .today-btn {
-        background: transparent;
-        color: var(--primary-color);
-        border: 2px solid var(--primary-color);
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: var(--white);
+        border: none;
+        padding: 10px 24px;
+        font-weight: 700;
+        letter-spacing: 0.5px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .today-btn::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+        transition: left 0.5s;
+    }
+
+    .today-btn:hover::before {
+        left: 100%;
     }
 
     .today-btn:hover {
-        background: var(--primary-color);
-        color: var(--white);
+        background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+        transform: translateY(-3px) scale(1.05);
+        box-shadow: 0 8px 20px rgba(118, 75, 162, 0.4);
     }
 
-    /* Calendar Grid */
+    .today-btn:hover .fa-calendar-day {
+        animation: bounce 0.6s ease;
+    }
+
+    @keyframes bounce {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-4px); }
+    }
+
+    /* ========================================
+       CALENDAR GRID
+       ======================================== */
+
     .calendar-grid-container {
         background: var(--white);
         border-radius: 16px;
@@ -243,7 +299,7 @@
     }
 
     .calendar-day.today {
-        background: #ddd6fe;  /* Μεσαίο μωβ - πιο έντονο από πριν */
+        background: #ddd6fe;
         color: var(--text-dark);
     }
 
@@ -253,15 +309,9 @@
     }
 
     .calendar-day.today:hover {
-        background: #c4b5fd;  /* Πιο σκούρο on hover */
+        background: #c4b5fd;
         transform: translateY(-2px);
     }
-
-
-    .calendar-day.today .event-dot {
-        opacity: 1;  /* Events διακρίνονται καλά */
-    }
-
 
     .calendar-day.has-events {
         border-left: 4px solid var(--primary-color);
@@ -282,6 +332,10 @@
         overflow: hidden;
     }
 
+    /* ========================================
+       EVENT DOTS
+       ======================================== */
+
     .event-dot {
         font-size: 11px;
         padding: 4px 8px;
@@ -295,7 +349,8 @@
     }
 
     .event-dot:hover {
-        transform: scale(1.05);
+        opacity: 0.85;
+        cursor: pointer;
     }
 
     .event-dot.task { background: var(--task-color); }
@@ -305,102 +360,278 @@
 
     .more-events {
         font-size: 10px;
-        color: var(--text-light);
+        color: var(--primary-color);
         font-weight: 600;
         margin-top: 4px;
         text-align: center;
-    }
-
-    /* Event Details Sidebar (when clicking event) */
-    .event-details-panel {
-        position: fixed;
-        right: -400px;
-        top: 0;
-        width: 400px;
-        height: 100vh;
-        background: var(--white);
-        box-shadow: -4px 0 12px rgba(0, 0, 0, 0.1);
-        transition: right 0.3s ease;
-        z-index: 500;
-        padding: 30px;
-        overflow-y: auto;
-    }
-
-    .event-details-panel.active {
-        right: 0;
-    }
-
-    .close-panel {
-        position: absolute;
-        top: 20px;
-        right: 20px;
-        font-size: 24px;
+        background: rgba(76, 100, 255, 0.1);
+        padding: 4px;
+        border-radius: 4px;
         cursor: pointer;
-        color: var(--text-light);
     }
 
-    /* Modal */
-    .modal-overlay {
+    .more-events:hover {
+        background: rgba(76, 100, 255, 0.2);
+    }
+
+    /* ========================================
+       MODALS - SINGLE CLEAN DEFINITION
+       ======================================== */
+
+    .modal {
+        display: none;
         position: fixed;
-        top: 0;
+        z-index: 1000;
         left: 0;
+        top: 0;
         width: 100%;
         height: 100%;
-        background: var(--modal-overlay);
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        z-index: 1000;
-        opacity: 0;
-        pointer-events: none;
-        transition: opacity 0.3s ease;
+        background-color: rgba(0, 0, 0, 0.6);
+        backdrop-filter: blur(4px);
     }
 
-    .modal-overlay.active {
-        opacity: 1;
-        pointer-events: all;
+    /* Center modal using flexbox when display is flex */
+    .modal[style*="display: flex"] {
+        align-items: center;
+        justify-content: center;
     }
 
     .modal-content {
-        background: var(--white);
-        width: 600px;
-        max-height: 90vh;
-        border-radius: 16px;
-        padding: 30px;
-        position: relative;
-        transform: translateY(20px);
-        transition: all 0.3s ease;
-        overflow-y: auto;
+        background-color: var(--white);
+        margin: auto;
+        padding: 0;
+        border-radius: 20px;
+        max-width: 650px;
+        width: 90%;
+        max-height: 85vh;
         box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        position: relative;
+        animation: modalSlideIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
     }
 
-    .modal-overlay.active .modal-content {
-        transform: translateY(0);
+    @keyframes modalSlideIn {
+        from {
+            opacity: 0;
+            transform: scale(0.9) translateY(-20px);
+        }
+        to {
+            opacity: 1;
+            transform: scale(1) translateY(0);
+        }
+    }
+
+    .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: start;
+        padding: 24px 30px;
+        border-bottom: 2px solid #f3f4f6;
+        background: linear-gradient(135deg, #f8f9ff 0%, #ffffff 100%);
+        flex-shrink: 0;
+    }
+
+    .modal-header h2 {
+        margin: 0;
+        font-size: 24px;
+        color: var(--text-dark);
+        font-weight: 700;
+    }
+
+    .modal-body {
+        padding: 24px 30px;
+        overflow-y: auto;
+        overflow-x: hidden;
+        flex: 1;
+    }
+
+    .modal-footer {
+        padding: 20px 30px;
+        border-top: 2px solid #f3f4f6;
+        display: flex;
+        justify-content: flex-end;
+        gap: 12px;
+        background: #fafafa;
+        flex-shrink: 0;
     }
 
     .close-modal {
-        position: absolute;
-        top: 20px;
-        right: 20px;
-        font-size: 28px;
+        background: none;
+        border: none;
+        font-size: 32px;
+        color: #9ca3af;
         cursor: pointer;
-        color: var(--text-light);
-        transition: color 0.2s;
+        line-height: 1;
+        padding: 0;
+        width: 32px;
+        height: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 8px;
+        transition: all 0.2s;
+        flex-shrink: 0;
     }
 
     .close-modal:hover {
+        background: #f3f4f6;
         color: var(--text-dark);
+        transform: rotate(90deg);
     }
 
-    .modal-title {
-        font-size: 24px;
-        font-weight: 700;
-        margin-bottom: 25px;
-        color: var(--text-dark);
+    .modal-body::-webkit-scrollbar {
+        width: 8px;
     }
+
+    .modal-body::-webkit-scrollbar-track {
+        background: #f3f4f6;
+        border-radius: 10px;
+    }
+
+    .modal-body::-webkit-scrollbar-thumb {
+        background: #d1d5db;
+        border-radius: 10px;
+    }
+
+    .modal-body::-webkit-scrollbar-thumb:hover {
+        background: #9ca3af;
+    }
+
+    /* ========================================
+       DAY MODAL SPECIFIC
+       ======================================== */
+
+    .day-modal-content {
+        max-width: 900px !important;
+        width: 95%;
+    }
+
+    .day-events-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 20px;
+    }
+
+    .day-event-card {
+        background: var(--white);
+        border-radius: 12px;
+        padding: 20px;
+        border-left: 4px solid #4c64ff;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        transition: all 0.3s ease;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .day-event-card:hover {
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+        transform: translateY(-4px);
+    }
+
+    .day-event-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .day-event-time {
+        font-size: 13px;
+        color: var(--primary-color);
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        background: rgba(76, 100, 255, 0.1);
+        padding: 6px 12px;
+        border-radius: 20px;
+    }
+
+    .day-event-time i {
+        font-size: 12px;
+    }
+
+    .day-event-actions {
+        display: flex;
+        gap: 4px;
+    }
+
+    .event-action-btn {
+        background: none;
+        border: none;
+        color: #9ca3af;
+        cursor: pointer;
+        padding: 6px 10px;
+        border-radius: 8px;
+        transition: all 0.2s;
+        font-size: 14px;
+    }
+
+    .event-action-btn:hover {
+        background: #f3f4f6;
+        color: var(--primary-color);
+    }
+
+    .event-action-btn.delete:hover {
+        color: #ef4444;
+        background: #fef2f2;
+    }
+
+    .day-event-title {
+        font-size: 18px;
+        font-weight: 700;
+        color: var(--text-dark);
+        line-height: 1.4;
+    }
+
+    .day-event-description {
+        font-size: 14px;
+        color: #6b7280;
+        line-height: 1.6;
+    }
+
+    .day-event-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        font-size: 13px;
+        color: #9ca3af;
+        padding-top: 8px;
+        border-top: 1px solid #f3f4f6;
+    }
+
+    .day-event-meta-item {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    #noEventsMessage {
+        text-align: center;
+        padding: 60px 20px;
+        color: #9ca3af;
+    }
+
+    #noEventsMessage i {
+        font-size: 64px;
+        margin-bottom: 20px;
+        opacity: 0.2;
+        color: var(--primary-color);
+    }
+
+    #noEventsMessage p {
+        font-size: 16px;
+        font-weight: 500;
+    }
+
+    /* ========================================
+       FORM STYLES
+       ======================================== */
 
     .form-group {
-        margin-bottom: 18px;
+        margin-bottom: 20px;
     }
 
     .form-label {
@@ -415,17 +646,19 @@
     .form-select,
     .form-textarea {
         width: 100%;
-        padding: 12px;
-        border: 2px solid var(--border);
-        border-radius: 8px;
+        padding: 12px 16px;
+        border: 2px solid #e5e7eb;
+        border-radius: 10px;
         font-size: 14px;
         outline: none;
         transition: all 0.3s;
+        box-sizing: border-box;
     }
 
     .form-textarea {
         resize: vertical;
-        min-height: 90px;
+        min-height: 100px;
+        font-family: inherit;
     }
 
     .form-input:focus,
@@ -438,27 +671,37 @@
     .form-row {
         display: grid;
         grid-template-columns: 1fr 1fr;
-        gap: 15px;
+        gap: 16px;
     }
 
     .checkbox-group {
         display: flex;
         align-items: center;
-        gap: 8px;
+        gap: 10px;
+        margin-bottom: 20px;
     }
 
-    .modal-actions {
-        display: flex;
-        justify-content: flex-end;
-        gap: 12px;
-        margin-top: 25px;
+    .checkbox-group input[type="checkbox"] {
+        width: 20px;
+        height: 20px;
+        cursor: pointer;
     }
+
+    .checkbox-group label {
+        margin: 0;
+        cursor: pointer;
+        font-weight: 500;
+    }
+
+    /* ========================================
+       BUTTONS
+       ======================================== */
 
     .btn-outline {
         background: transparent;
-        border: 2px solid var(--border);
+        border: 2px solid #e5e7eb;
         padding: 12px 24px;
-        border-radius: 8px;
+        border-radius: 10px;
         cursor: pointer;
         color: var(--text-dark);
         font-weight: 600;
@@ -468,6 +711,7 @@
     .btn-outline:hover {
         border-color: var(--primary-color);
         color: var(--primary-color);
+        background: rgba(76, 100, 255, 0.05);
     }
 
     .btn-primary {
@@ -475,7 +719,7 @@
         color: var(--white);
         border: none;
         padding: 12px 24px;
-        border-radius: 8px;
+        border-radius: 10px;
         cursor: pointer;
         font-weight: 600;
         transition: all 0.3s;
@@ -487,7 +731,10 @@
         box-shadow: 0 4px 12px rgba(76, 100, 255, 0.3);
     }
 
-    /* Dropdown */
+    /* ========================================
+       DROPDOWN
+       ======================================== */
+
     .dropdown {
         position: relative;
     }
@@ -544,13 +791,50 @@
         background: #fee;
     }
 
-    .no-events {
-        text-align: center;
-        padding: 60px 20px;
-        color: var(--text-light);
-    }
+    /* ========================================
+       RESPONSIVE
+       ======================================== */
 
-    </style>
+    @media (max-width: 768px) {
+        .form-row {
+            grid-template-columns: 1fr;
+        }
+        
+        .modal-content {
+            width: 95%;
+            max-height: 95vh;
+        }
+        
+        .day-modal-content {
+            width: 98%;
+        }
+        
+        .day-events-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .modal-body {
+            padding: 20px;
+        }
+        
+        .modal-header,
+        .modal-footer {
+            padding: 16px 20px;
+        }
+
+        .calendar-header {
+            flex-direction: column;
+            gap: 16px;
+            align-items: flex-start;
+        }
+
+        .calendar-nav {
+            width: 100%;
+            justify-content: space-between;
+        }
+    }
+</style>
+
 </head>
 <body class="bg-light-bg font-sans min-h-screen flex">
 
@@ -678,7 +962,7 @@
     </div>
 
         <!-- Event Modal -->
-    <div class="modal-overlay" id="eventModal">
+    <div class="modal" id="eventModal">
         <div class="modal-content">
             <span class="close-modal" onclick="closeModal()">×</span>
             <h2 class="modal-title" id="modalTitle">Add Event</h2>
@@ -789,6 +1073,29 @@
             </form>
         </div>
     </div>
+
+        <!-- Day Details Modal -->
+    <div id="dayModal" class="modal">
+        <div class="modal-content day-modal-content">
+            <div class="modal-header">
+                <div>
+                    <h2 id="dayModalTitle">Events for December 17, 2025</h2>
+                    <p id="dayModalSubtitle" style="color: #6b7280; font-size: 14px; margin-top: 5px;">3 events scheduled</p>
+                </div>
+                <button class="close-modal" onclick="closeDayModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div id="dayEventsContainer" class="day-events-grid">
+                    <!-- Events will be inserted here by JavaScript -->
+                </div>
+                <div id="noEventsMessage" style="display: none; text-align: center; padding: 40px; color: #9ca3af;">
+                    <i class="fas fa-calendar-day" style="font-size: 48px; margin-bottom: 16px; opacity: 0.3;"></i>
+                    <p>No events scheduled for this day</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
 
     <script>
         // Global Variables
@@ -949,10 +1256,15 @@
             dayElement.appendChild(eventsContainer);
 
             // Click to add event
-            dayElement.onclick = () => {
+            dayElement.onclick = (e) => {
                 if (!isOtherMonth) {
-                    selectedDate = dateStr;
-                    openModal();
+                    // Don't open modal if clicking on event dot or more text
+                    if (e.target.classList.contains('event-dot') || 
+                        e.target.classList.contains('more-events')) {
+                        return;
+                    }
+                    // Open day modal to show all events
+                    showDayEvents(dateStr, dayEvents);
                 }
             };
 
@@ -969,15 +1281,66 @@
                 day: 'numeric' 
             });
 
-            let message = `Events on ${formattedDate}:\n\n`;
-            dayEvents.forEach((event, index) => {
-                const time = event.all_day ? 'All Day' : 
-                    (event.start_time ? event.start_time.substring(0, 5) : 'No time');
-                message += `${index + 1}. ${event.title} (${time})\n`;
-            });
-
-            alert(message);
+            // Set modal title
+            document.getElementById('dayModalTitle').textContent = formattedDate;
+            document.getElementById('dayModalSubtitle').textContent = 
+                dayEvents.length === 0 ? 'No events' : 
+                dayEvents.length === 1 ? '1 event scheduled' : 
+                `${dayEvents.length} events scheduled`;
+            
+            const container = document.getElementById('dayEventsContainer');
+            const noEventsMsg = document.getElementById('noEventsMessage');
+            
+            container.innerHTML = '';
+            
+            if (dayEvents.length === 0) {
+                container.style.display = 'none';
+                noEventsMsg.style.display = 'block';
+            } else {
+                container.style.display = 'grid';
+                noEventsMsg.style.display = 'none';
+                
+                dayEvents.forEach((event, index) => {
+                    const eventCard = document.createElement('div');
+                    eventCard.className = 'day-event-card';
+                    eventCard.style.borderLeftColor = event.color || '#4c64ff';
+                    
+                    const time = event.all_day ? 'All Day' : 
+                        (event.start_time ? event.start_time.substring(0, 5) : 'No time');
+                    
+                    eventCard.innerHTML = `
+                        <div class="day-event-header">
+                            <div class="day-event-time">
+                                <i class="far fa-clock"></i>
+                                ${time}
+                            </div>
+                            <div class="day-event-actions">
+                                <button class="event-action-btn" onclick="editEventFromDay(${event.id})" title="Edit">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="event-action-btn delete" onclick="deleteEventFromDay(${event.id})" title="Delete">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="day-event-title">${event.title}</div>
+                        ${event.description ? `<div class="day-event-description">${event.description}</div>` : ''}
+                        <div class="day-event-meta">
+                            <div class="day-event-meta-item">
+                                <i class="fas fa-circle" style="color: ${event.color || '#4c64ff'}; font-size: 8px;"></i>
+                                ${event.category || 'General'}
+                            </div>
+                        </div>
+                    `;
+                    
+                    container.appendChild(eventCard);
+                });
+            }
+            
+            // Open the modal
+            document.getElementById('dayModal').style.display = 'flex';
         }
+
 
         // Navigation
         function previousMonth() {
@@ -1007,8 +1370,8 @@
 
         // Open Modal
         function openModal(event = null) {
-            modal.classList.add('active');
-
+            modal.style.display = 'flex';
+            
             if (event) {
                 // EDIT MODE
                 currentId = event.id;
@@ -1027,41 +1390,35 @@
                 projectIdInput.value = event.project_id || '';
                 toggleTimeFields();
             } else {
-                // NEW MODE
+                // ADD MODE
                 currentId = null;
                 modalTitle.innerText = 'Add Event';
-                titleInput.value = '';
-                descInput.value = '';
-                eventTypeInput.value = 'task';
-                priorityInput.value = 'medium';
-                
-                // Set selected date or today
+                document.getElementById('eventForm').reset();
                 if (selectedDate) {
                     startDateInput.value = selectedDate;
-                } else {
-                    startDateInput.value = new Date().toISOString().split('T')[0];
                 }
-                
-                endDateInput.value = '';
-                allDayInput.checked = false;
-                startTimeInput.value = '';
-                endTimeInput.value = '';
-                statusInput.value = 'pending';
-                assignedToInput.value = '';
-                projectIdInput.value = '';
                 toggleTimeFields();
             }
         }
 
+
         // Close Modal
         function closeModal() {
-            modal.classList.remove('active');
+            modal.style.display = 'none';
+            document.getElementById('eventForm').reset();
+            currentId = null;
             selectedDate = null;
         }
 
+
+        function closeDayModal() {
+            document.getElementById('dayModal').style.display = 'none';
+        }
+
         // Close modal when clicking overlay
-        modal.addEventListener('click', e => {
-            if (e.target === modal) closeModal();
+        const dayModal = document.getElementById('dayModal');
+            dayModal.addEventListener('click', e => {
+            if (e.target === dayModal) closeDayModal();
         });
 
         // Toggle Time Fields
