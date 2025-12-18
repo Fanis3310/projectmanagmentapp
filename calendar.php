@@ -129,11 +129,20 @@
         justify-content: space-between;
         align-items: center;
         margin-bottom: 30px;
-        background: linear-gradient(135deg, #f5f7fa 0%, #ffffff 100%);
+        
+        /* Ίδιο φόντο με το container */
+        background: var(--white); 
+        
+        /* Ίδιες γωνίες με το container (16px) */
+        border-radius: 16px; 
+        
         padding: 25px 35px;
-        border-radius: 20px;
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
-        border: 1px solid rgba(255, 255, 255, 0.8);
+        
+        /* Ίδια σκιά ακριβώς με το calendar-grid-container */
+        box-shadow: var(--shadow);
+        
+        /* Αφαιρούμε το περίγραμμα για να είναι ίδιο με το container */
+        border: none; 
     }
 
     .calendar-title {
@@ -277,24 +286,34 @@
         display: grid;
         grid-template-columns: repeat(7, 1fr);
         gap: 10px;
-        min-height: 600px;
+        /* Κλειδώνει όλα τα κελιά στο ίδιο ύψος */
+        grid-auto-rows: 1fr; 
     }
 
     .calendar-day {
+        /* ΣΤΑΘΕΡΗ ΔΟΜΗ ΓΙΑ ΟΛΑ */
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        height: 100%;
+        min-height: 140px; 
+        padding: 8px;
+        
         background: #f8f9fa;
         border-radius: 12px;
-        padding: 12px;
-        min-height: 120px;
+        
+        /* ΔΙΑΦΑΝΕΣ περίγραμμα 2px (πιάνει τον ίδιο χώρο με το Today) */
+        border: 2px solid transparent; 
+        
         cursor: pointer;
-        transition: all 0.3s ease;
+        transition: all 0.2s ease;
         position: relative;
-        border: 2px solid transparent;
     }
 
     .calendar-day:hover {
+        border-color: #e2e8f0; /* Γκρι περίγραμμα στο hover των απλών */
         transform: translateY(-4px);
-        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
-        border-color: var(--primary-color);
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.05);
     }
 
     .calendar-day.other-month {
@@ -303,18 +322,22 @@
     }
 
     .calendar-day.today {
-        background: #ddd6fe;
-        color: var(--text-dark);
+        background: #ffffff !important; 
+        /* Το μπλε περίγραμμα αντικαθιστά το διαφανές (ίδιο πάχος) */
+        border-color: #4c64ff !important; 
     }
 
     .calendar-day.today .day-number {
-        color: var(--primary-color);
-        font-weight: 700;
+        color: #4c64ff !important; 
+        /* font-size: 16px;  <-- ΚΛΗΡΟΝΟΜΕΙΤΑΙ (για να μην χαλάει η συμμετρία) */
+        /* font-weight: 700; <-- ΚΛΗΡΟΝΟΜΕΙΤΑΙ */
     }
 
     .calendar-day.today:hover {
-        background: #c4b5fd;
-        transform: translateY(-2px);
+        border-color: #4c64ff !important;
+        transform: translateY(-4px);
+        box-shadow: 0 8px 25px rgba(76, 100, 255, 0.45);
+        z-index: 10;
     }
 
     .calendar-day.has-events {
@@ -322,18 +345,19 @@
     }
 
     .day-number {
-        font-size: 18px;
-        font-weight: 700;
+        font-size: 16px;    /* Ίδιο μέγεθος παντού */
+        font-weight: 700;   /* Ίδιο πάχος παντού */
+        margin-bottom: 8px; /* Ίδιο κενό από τα events */
         color: var(--text-dark);
-        margin-bottom: 8px;
+        flex-shrink: 0;
     }
 
     .day-events {
         display: flex;
         flex-direction: column;
         gap: 4px;
-        max-height: 70px;
-        overflow: hidden;
+        width: 100%;
+        flex: 1;
     }
 
     /* ========================================
@@ -341,20 +365,24 @@
        ======================================== */
 
     .event-dot {
-        font-size: 11px;
-        padding: 4px 8px;
+        height: 24px; /* ΣΤΑΘΕΡΟ ΥΨΟΣ: Είτε 1 είτε 3, θα είναι ίδια */
+        display: flex;
+        align-items: center; /* ΚΕΝΤΡΑΡΙΣΜΑ ΚΕΙΜΕΝΟΥ ΚΑΘΕΤΑ */
+        padding: 0 8px;
         border-radius: 6px;
-        color: var(--white);
-        font-weight: 600;
+        font-size: 11px;
+        font-weight: 700;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
         transition: all 0.2s;
+        width: 100%; /* Πιάνει όλο το πλάτος */
     }
 
     .event-dot:hover {
-        opacity: 0.85;
-        cursor: pointer;
+        opacity: 0.8;
+        transform: translateY(-1px);
+        z-index: 5;
     }
 
     .event-dot.task { background: var(--task-color); }
@@ -363,19 +391,32 @@
     .event-dot.deadline { background: var(--deadline-color); }
 
     .more-events {
-        font-size: 10px;
-        color: var(--primary-color);
-        font-weight: 600;
-        margin-top: 4px;
-        text-align: center;
-        background: rgba(76, 100, 255, 0.1);
-        padding: 4px;
-        border-radius: 4px;
+        /* 1. ΙΔΙΕΣ ΔΙΑΣΤΑΣΕΙΣ ME TA EVENTS */
+        height: 24px;       /* Ίδιο ύψος με το .event-dot */
+        width: 100%;        /* Πιάνει όλο το πλάτος */
+        border-radius: 6px; /* Ίδια στρογγυλάδα */
+        padding: 0 8px;     /* Ίδιο padding */
+        
+        /* 2. ΚΕΝΤΡΑΡΙΣΜΑ & ΣΤΥΛ */
+        display: flex;
+        align-items: center;
+        justify-content: center; /* Κεντράρισμα του κειμένου */
+        
+        font-size: 11px;
+        font-weight: 700;
+        margin-top: auto; /* Κολλάει στο κάτω μέρος αν υπάρχει κενό */
+        
+        /* 3. ΧΡΩΜΑΤΑ (Blue Theme) */
+        color: #4c64ff; 
+        background: rgba(76, 100, 255, 0.1); 
+        
         cursor: pointer;
+        transition: all 0.2s;
     }
 
     .more-events:hover {
         background: rgba(76, 100, 255, 0.2);
+        transform: translateY(-1px);
     }
 
     /* ========================================
@@ -504,131 +545,166 @@
     }
 
     /* ========================================
-       DAY MODAL SPECIFIC
+       DAY MODAL SPECIFIC (Accordion List)
        ======================================== */
-
     .day-modal-content {
-        max-width: 900px !important;
+        max-width: 600px !important;
         width: 95%;
+        max-height: 85vh;
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .modal-body {
+        padding: 20px;
+        overflow-y: auto;
     }
 
     .day-events-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-        gap: 20px;
-    }
-
-    .day-event-card {
-        background: var(--white);
-        border-radius: 12px;
-        padding: 20px;
-        border-left: 4px solid #4c64ff;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-        transition: all 0.3s ease;
-        display: flex;
+        display: flex; 
         flex-direction: column;
         gap: 12px;
     }
 
-    .day-event-card:hover {
-        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
-        transform: translateY(-4px);
+    /* ΚΑΡΤΑ (Container) */
+    .day-event-card {
+        background: var(--white);
+        border-radius: 12px;
+        padding: 0; 
+        border: 1px solid #e2e8f0;
+        border-left: 4px solid #4c64ff;
+        transition: all 0.2s ease;
+        overflow: hidden; 
+        cursor: pointer;
     }
 
+    .day-event-card:hover {
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        transform: translateY(-2px);
+    }
+
+    /* HEADER (ΑΥΤΟ ΦΑΙΝΕΤΑΙ ΠΑΝΤΑ) */
     .day-event-header {
+        padding: 16px 20px;
         display: flex;
         justify-content: space-between;
         align-items: center;
+        background: #fff;
+    }
+
+    .header-left {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        flex: 1;
     }
 
     .day-event-time {
         font-size: 13px;
-        color: var(--primary-color);
-        font-weight: 600;
+        font-weight: 700;
+        padding: 6px 10px;
+        border-radius: 6px;
+        white-space: nowrap;
         display: flex;
         align-items: center;
         gap: 6px;
-        background: rgba(76, 100, 255, 0.1);
-        padding: 6px 12px;
-        border-radius: 20px;
-    }
-
-    .day-event-time i {
-        font-size: 12px;
-    }
-
-    .day-event-actions {
-        display: flex;
-        gap: 4px;
-    }
-
-    .event-action-btn {
-        background: none;
-        border: none;
-        color: #9ca3af;
-        cursor: pointer;
-        padding: 6px 10px;
-        border-radius: 8px;
-        transition: all 0.2s;
-        font-size: 14px;
-    }
-
-    .event-action-btn:hover {
-        background: #f3f4f6;
-        color: var(--primary-color);
-    }
-
-    .event-action-btn.delete:hover {
-        color: #ef4444;
-        background: #fef2f2;
+        flex-shrink: 0;
     }
 
     .day-event-title {
-        font-size: 18px;
+        font-size: 16px;
         font-weight: 700;
         color: var(--text-dark);
-        line-height: 1.4;
+        margin: 0;
     }
 
-    .day-event-description {
-        font-size: 14px;
-        color: #6b7280;
-        line-height: 1.6;
+    .chevron-icon {
+        color: #94a3b8;
+        transition: transform 0.3s ease;
     }
 
-    .day-event-meta {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 12px;
-        font-size: 13px;
-        color: #9ca3af;
-        padding-top: 8px;
-        border-top: 1px solid #f3f4f6;
-    }
-
-    .day-event-meta-item {
-        display: flex;
-        align-items: center;
-        gap: 6px;
-    }
-
-    #noEventsMessage {
-        text-align: center;
-        padding: 60px 20px;
-        color: #9ca3af;
-    }
-
-    #noEventsMessage i {
-        font-size: 64px;
-        margin-bottom: 20px;
-        opacity: 0.2;
+    .day-event-card.expanded .chevron-icon {
+        transform: rotate(180deg);
         color: var(--primary-color);
     }
 
-    #noEventsMessage p {
-        font-size: 16px;
-        font-weight: 500;
+    /* DETAILS (ΑΥΤΑ ΕΙΝΑΙ ΚΡΥΦΑ - ΕΜΦΑΝΙΖΟΝΤΑΙ ΜΟΝΟ ΣΤΟ EXPANDED) */
+    .day-event-details {
+        max-height: 0;       /* Κλειστό ύψος */
+        opacity: 0;          /* Αόρατο */
+        overflow: hidden;
+        transition: all 0.3s ease-in-out;
+        background: #f8fafc; 
+        border-top: 1px solid #f1f5f9;
+        padding: 0 20px;     /* Μηδέν padding όταν είναι κλειστό */
     }
+
+    /* Όταν ανοίγει: */
+    .day-event-card.expanded .day-event-details {
+        max-height: 1000px;  /* Μεγάλο ύψος για να χωρέσουν όλα */
+        opacity: 1;
+        padding: 20px;       /* Επαναφορά padding */
+    }
+
+    /* Στυλ για τα περιεχόμενα (Περιγραφή, Grid, Κουμπιά) */
+    .event-desc-text {
+        font-size: 14px;
+        color: #475569;
+        line-height: 1.6;
+        margin-bottom: 20px;
+        padding-bottom: 15px;
+        border-bottom: 1px solid #e2e8f0;
+    }
+
+    .details-label {
+        font-size: 11px;
+        text-transform: uppercase;
+        font-weight: 700;
+        color: #94a3b8;
+        margin-bottom: 10px;
+        letter-spacing: 0.5px;
+    }
+
+    .event-info-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 15px;
+        margin-bottom: 25px;
+    }
+
+    .info-item { display: flex; flex-direction: column; gap: 4px; }
+    .info-label { font-size: 12px; font-weight: 600; color: #94a3b8; }
+    .info-value { font-size: 14px; font-weight: 500; color: #1e293b; display: flex; align-items: center; gap: 8px; }
+    .info-value i { font-size: 14px; color: #64748b; width: 16px; }
+
+    .event-actions-footer {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+        padding-top: 10px;
+        border-top: 1px solid #e2e8f0;
+    }
+
+    .action-btn-sm {
+        padding: 8px 16px;
+        border-radius: 6px;
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        transition: 0.2s;
+        border: 1px solid transparent;
+    }
+
+    .btn-edit { background: #fff; border-color: #cbd5e1; color: #475569; }
+    .btn-edit:hover { border-color: #4c64ff; color: #4c64ff; background: #eff6ff; }
+    .btn-delete { background: #fff; border-color: #fca5a5; color: #ef4444; }
+    .btn-delete:hover { background: #fef2f2; border-color: #ef4444; }
+
+    #noEventsMessage { text-align: center; padding: 40px 20px; color: #94a3b8; }
+    #noEventsMessage i { font-size: 48px; margin-bottom: 15px; opacity: 0.5; display: block; }
 
     /* ========================================
        FORM STYLES
@@ -904,12 +980,17 @@
         }
 
         /* --- 4. Πλέγμα Ημερολογίου (3 Στήλες) --- */
-        .calendar-grid-container {
-            padding: 10px 5px;
-            border: none;
-            box-shadow: none;
-            background: transparent;
-        }
+        .calendar-grid {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        gap: 10px;
+        
+        /* ΤΟ ΜΥΣΤΙΚΟ: Κάνει όλες τις γραμμές να έχουν ΑΚΡΙΒΩΣ το ίδιο ύψος */
+        grid-auto-rows: 1fr; 
+        
+        /* Αφαιρούμε το min-height: 600px για να το αφήσουμε να προσαρμόζεται στο περιεχόμενο */
+        min-height: auto; 
+       }
 
         /* ΚΡΥΒΟΥΜΕ τις μέρες της εβδομάδας (Mon, Tue...) γιατί δεν ταιριάζουν με 3 στήλες */
         .calendar-weekdays {
@@ -926,8 +1007,24 @@
         }
 
         .calendar-day {
-            min-height: 100px; /* Ύψος κάθε ημέρας */
+            background: #f8f9fa;
+            border-radius: 12px;
             padding: 8px;
+            
+            /* Σημαντικό: Να πιάνει όλο το ύψος του κελιού του grid */
+            height: 100%; 
+            
+            /* Ελάχιστο ύψος για να χωράνε άνετα 3 events (όπως το Today) */
+            min-height: 140px; 
+            
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+            
+            /* Διαφανές περίγραμμα 2px για να πιάνει τον ίδιο χώρο με το Today */
+            border: 2px solid transparent; 
+            
+            /* Flexbox για να στοιχίζονται όλα ίδια */
             display: flex;
             flex-direction: column;
             justify-content: flex-start;
@@ -935,7 +1032,10 @@
 
         .day-number {
             font-size: 16px;
-            align-self: flex-start;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 8px;
+            flex-shrink: 0; /* Δεν ζουλιέται ποτέ */
         }
 
         /* Μικραίνουμε τα events για να χωράνε */
@@ -1243,6 +1343,13 @@
 
 
     <script>
+        // 1. ΟΡΙΣΜΟΣ ΧΡΩΜΑΤΩΝ ΒΑΣΕΙ PRIORITY (Το βάζουμε στην αρχή για να το βρίσκει πάντα)
+        const priorityColors = {
+            'low': '#0097a7',      // Cyan (Ίδιο με το "Active" του Project)
+            'medium': '#f59e0b',   // Orange (Ίδιο με το "Planning" του Project)
+            'high': '#ef4444'      // Red (Ίδιο με το "Delete/Inactive" για επείγοντα)
+        };
+
         // Global Variables
         let events = [];
         let currentId = null;
@@ -1280,23 +1387,17 @@
         const menuButton = document.getElementById('menu-button');
         const sidebar = document.getElementById('sidebar');
 
-        // Όταν πατάμε το κουμπί, αλλάζουμε την κλάση που κρύβει το sidebar
         if (menuButton) {
             menuButton.addEventListener('click', (e) => {
-                e.stopPropagation(); // Σταματάει το κλικ από το να πάει στο document
+                e.stopPropagation();
                 sidebar.classList.toggle('-translate-x-full');
             });
         }
 
-        // Προαιρετικό: Να κλείνει το sidebar αν κάνουμε κλικ έξω από αυτό (στα κινητά)
         document.addEventListener('click', (e) => {
-            // Αν το sidebar είναι ανοιχτό (δεν έχει την κλάση -translate-x-full)
-            // ΚΑΙ το κλικ ΔΕΝ έγινε μέσα στο sidebar
-            // ΚΑΙ είμαστε σε κινητό (οθόνη μικρότερη από 1024px)
             if (!sidebar.classList.contains('-translate-x-full') && 
                 !sidebar.contains(e.target) && 
                 window.innerWidth < 1024) {
-                
                 sidebar.classList.add('-translate-x-full');
             }
         });
@@ -1310,7 +1411,7 @@
                 renderCalendar();
             } catch (error) {
                 console.error('Error loading events:', error);
-                alert('Failed to load events!');
+                // Δεν βγάζουμε alert για να μην ενοχλεί αν είναι προσωρινό το θέμα
             }
         }
 
@@ -1319,41 +1420,37 @@
             calendarTitle.textContent = `${monthNames[currentMonth]} ${currentYear}`;
             calendarGrid.innerHTML = '';
 
-            // Get first day of month (0 = Sunday, 1 = Monday, etc.)
             const firstDay = new Date(currentYear, currentMonth, 1);
             const lastDay = new Date(currentYear, currentMonth + 1, 0);
             
-            // Adjust: Monday = 0, Sunday = 6
             let firstDayOfWeek = firstDay.getDay() - 1;
             if (firstDayOfWeek === -1) firstDayOfWeek = 6;
 
             const daysInMonth = lastDay.getDate();
             const prevMonthDays = new Date(currentYear, currentMonth, 0).getDate();
 
-            // Previous month days
             for (let i = firstDayOfWeek - 1; i >= 0; i--) {
                 const day = prevMonthDays - i;
                 const dayElement = createDayElement(day, true, -1);
                 calendarGrid.appendChild(dayElement);
             }
 
-            // Current month days
             for (let day = 1; day <= daysInMonth; day++) {
                 const dayElement = createDayElement(day, false, 0);
                 calendarGrid.appendChild(dayElement);
             }
 
-            // Next month days
             const totalCells = calendarGrid.children.length;
-            const remainingCells = 42 - totalCells; // 6 rows x 7 days
+            const remainingCells = 42 - totalCells;
             for (let day = 1; day <= remainingCells; day++) {
                 const dayElement = createDayElement(day, true, 1);
                 calendarGrid.appendChild(dayElement);
             }
         }
 
-       
-        // Create Day Element
+      
+        
+        // Create Day Element (Fixed & Symmetrical)
         function createDayElement(day, isOtherMonth, monthOffset) {
             const dayElement = document.createElement('div');
             dayElement.className = 'calendar-day';
@@ -1362,74 +1459,64 @@
                 dayElement.classList.add('other-month');
             }
 
-            // Calculate actual date
             let month = currentMonth + monthOffset;
             let year = currentYear;
-            if (month < 0) {
-                month = 11;
-                year--;
-            } else if (month > 11) {
-                month = 0;
-                year++;
-            }
+            if (month < 0) { month = 11; year--; } 
+            else if (month > 11) { month = 0; year++; }
 
             const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
             
-            // Check if today
             const today = new Date();
             const isToday = day === today.getDate() && month === today.getMonth() && year === today.getFullYear();
-            if (isToday && !isOtherMonth) {
-                dayElement.classList.add('today');
-            }
+            if (isToday && !isOtherMonth) dayElement.classList.add('today');
 
-            // Day number
             const dayNumber = document.createElement('div');
             dayNumber.className = 'day-number';
             dayNumber.textContent = day;
             dayElement.appendChild(dayNumber);
 
-            // Get events for this day
             const dayEvents = events.filter(e => e.start_date === dateStr);
             
-            if (dayEvents.length > 0 && !isOtherMonth) {
-                dayElement.classList.add('has-events');
-            }
+            if (dayEvents.length > 0 && !isOtherMonth) dayElement.classList.add('has-events');
 
-            // Day events container
             const eventsContainer = document.createElement('div');
             eventsContainer.className = 'day-events';
 
-            // Show max 2 events
-            const maxVisible = 2;
-            dayEvents.slice(0, maxVisible).forEach(event => {
+            // ΛΟΓΙΚΗ ΓΙΑ 3 EVENTS:
+            // Αν έχουμε μέχρι 3 events, τα δείχνουμε όλα (χωράνε ακριβώς).
+            // Αν έχουμε 4+, δείχνουμε τα 2 και το κουμπί "More".
+            let limit = 3;
+            if (dayEvents.length > 3) {
+                limit = 2;
+            }
+
+            dayEvents.slice(0, limit).forEach(event => {
                 const eventDot = document.createElement('div');
-                eventDot.className = `event-dot ${event.event_type}`;
+                eventDot.className = 'event-dot';
                 eventDot.textContent = event.title;
                 
-                // --- ΑΛΛΑΓΗ 1: Αφαιρέσαμε το onclick εδώ ---
-                // Πλέον δεν ανοίγει το Edit Modal, αλλά αφήνει το κλικ να περάσει στο κουτί
+                // Χρώματα Project Style
+                const prio = event.priority ? event.priority.toLowerCase() : 'medium';
+                const color = priorityColors[prio] || '#0097a7'; 
+                
+                eventDot.style.color = color;
+                eventDot.style.backgroundColor = color + '25'; 
                 
                 eventsContainer.appendChild(eventDot);
             });
 
-            // Show "more" indicator
-            if (dayEvents.length > maxVisible) {
+            // Αν κόψαμε events, δείχνουμε το κουμπί
+            if (dayEvents.length > limit) {
                 const moreText = document.createElement('div');
                 moreText.className = 'more-events';
-                moreText.textContent = `+${dayEvents.length - maxVisible} more`;
-                
-                // --- ΑΛΛΑΓΗ 2: Αφαιρέσαμε το onclick και εδώ ---
-                
+                moreText.textContent = `+${dayEvents.length - limit} more`;
                 eventsContainer.appendChild(moreText);
             }
 
             dayElement.appendChild(eventsContainer);
 
-            // Click handler for the WHOLE box (Day Click)
             dayElement.onclick = (e) => {
                 if (!isOtherMonth) {
-                    // --- ΑΛΛΑΓΗ 3: Αφαιρέσαμε τους ελέγχους (if target is event-dot return...) ---
-                    // Τώρα, ό,τι και να πατήσεις μέσα στο κουτί, εκτελείται αυτός ο κώδικας
                     showDayEvents(dateStr, dayEvents);
                 }
             };
@@ -1437,45 +1524,13 @@
             return dayElement;
         }
 
-        // Χρώματα ανάλογα με τον τύπο του event
-        const eventColors = {
-            'task': '#4c64ff',      // Μπλε
-            'meeting': '#10b981',   // Πράσινο
-            'reminder': '#f59e0b',  // Πορτοκαλί
-            'deadline': '#ef4444'   // Κόκκινο
-        };
-
-        // Συνάρτηση για Edit μέσα από το Day Modal
-        function editEventFromDay(id) {
-            // Βρίσκουμε το event από τη λίστα με βάση το ID
-            const event = events.find(e => e.id == id);
-            if (event) {
-                closeDayModal(); // Κλείνουμε το παράθυρο ημέρας
-                openModal(event); // Ανοίγουμε το παράθυρο επεξεργασίας
-            }
-        }
-
-        // Συνάρτηση για Delete μέσα από το Day Modal
-        function deleteEventFromDay(id) {
-                    if (confirm('Are you sure you want to delete this event?')) {
-                        // Χρησιμοποιούμε την υπάρχουσα λογική διαγραφής
-                        deleteEvent(id).then(() => {
-                            closeDayModal(); // Κλείνουμε το παράθυρο ημέρας μετά τη διαγραφή
-                        });
-                    }
-                }
-
-                // Show all events for a day (you can implement a side panel or modal)
+        // Show Day Details (Full Info Hidden in Accordion)
         function showDayEvents(date, dayEvents) {
             const dateObj = new Date(date + 'T00:00:00');
             const formattedDate = dateObj.toLocaleDateString('en-US', { 
-                weekday: 'long', 
-                year: 'numeric', 
-                month: 'long', 
-                day: 'numeric' 
+                weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' 
             });
 
-            // Τίτλος και υπότιτλος
             document.getElementById('dayModalTitle').textContent = formattedDate;
             document.getElementById('dayModalSubtitle').textContent = 
                 dayEvents.length === 0 ? 'No events' : 
@@ -1491,78 +1546,143 @@
                 container.style.display = 'none';
                 noEventsMsg.style.display = 'block';
             } else {
-                container.style.display = 'grid';
+                container.style.display = 'flex'; 
                 noEventsMsg.style.display = 'none';
                 
                 dayEvents.forEach((event) => {
-                    // 1. Βρίσκουμε το σωστό χρώμα
-                    const color = eventColors[event.event_type] || '#4c64ff';
+                    // --- Ετοιμασία Δεδομένων ---
+                    const prio = event.priority ? event.priority.toLowerCase() : 'medium';
+                    const color = priorityColors[prio] || '#4c64ff';
+                    const priorityDisplay = prio.charAt(0).toUpperCase() + prio.slice(1);
+                    const typeDisplay = event.event_type.charAt(0).toUpperCase() + event.event_type.slice(1);
+                    const statusDisplay = event.status.charAt(0).toUpperCase() + event.status.slice(1);
                     
+                    const timeHeader = event.all_day == 1 ? 'All Day' : 
+                        (event.start_time ? event.start_time.substring(0, 5) : 'No time');
+
+                    // Ανάκτηση ονομάτων από ID
+                    let projectName = 'No Project';
+                    if (event.project_id) {
+                        const proj = projects.find(p => p.id == event.project_id);
+                        if (proj) projectName = proj.name;
+                    }
+
+                    let memberName = 'Unassigned';
+                    if (event.assigned_to) {
+                        const mem = teamMembers.find(m => m.id == event.assigned_to);
+                        if (mem) memberName = mem.name;
+                    }
+
                     const eventCard = document.createElement('div');
                     eventCard.className = 'day-event-card';
-                    
-                    // 2. Εφαρμόζουμε το χρώμα στο αριστερό περιθώριο
                     eventCard.style.borderLeftColor = color;
-                    
-                    const time = event.all_day == 1 ? 'All Day' : 
-                        (event.start_time ? event.start_time.substring(0, 5) : 'No time');
-                    
-                    // 3. Διορθωμένο HTML με σωστά χρώματα και λειτουργικά κουμπιά
+                    eventCard.onclick = function() { toggleEventCard(this); };
+
                     eventCard.innerHTML = `
                         <div class="day-event-header">
-                            <div class="day-event-time" style="color: ${color}; background: ${color}15;">
-                                <i class="far fa-clock"></i>
-                                ${time}
+                            <div class="header-left">
+                                <div class="day-event-time" style="color: ${color}; background: ${color}15;">
+                                    <i class="far fa-clock"></i> ${timeHeader}
+                                </div>
+                                <h3 class="day-event-title">${event.title}</h3>
                             </div>
-                            <div class="day-event-actions">
-                                <button class="event-action-btn" onclick="editEventFromDay(${event.id})" title="Edit">
-                                    <i class="fas fa-edit"></i>
-                                </button>
-                                <button class="event-action-btn delete" onclick="deleteEventFromDay(${event.id})" title="Delete">
-                                    <i class="fas fa-trash"></i>
-                                </button>
-                            </div>
+                            <i class="fas fa-chevron-down chevron-icon"></i>
                         </div>
-                        <div class="day-event-title">${event.title}</div>
-                        ${event.description ? `<div class="day-event-description">${event.description}</div>` : ''}
-                        <div class="day-event-meta">
-                            <div class="day-event-meta-item">
-                                <i class="fas fa-circle" style="color: ${color}; font-size: 8px;"></i>
-                                <span style="text-transform: capitalize;">${event.event_type}</span>
+
+                        <div class="day-event-details">
+                            
+                            <div class="details-label">Description</div>
+                            <div class="event-desc-text">
+                                ${event.description ? event.description : '<span style="color:#94a3b8; font-style:italic;">No description provided.</span>'}
                             </div>
-                            ${event.assigned_name ? `
-                            <div class="day-event-meta-item">
-                                <i class="fas fa-user" style="font-size: 10px;"></i>
-                                ${event.assigned_name}
-                            </div>` : ''}
+                            
+                            <div class="details-label">Event Information</div>
+                            <div class="event-info-grid">
+                                <div class="info-item">
+                                    <span class="info-label">Status</span>
+                                    <span class="info-value"><i class="fas fa-tasks"></i> ${statusDisplay}</span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">Priority</span>
+                                    <span class="info-value" style="color: ${color};"><i class="fas fa-flag"></i> ${priorityDisplay}</span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">Type</span>
+                                    <span class="info-value"><i class="fas fa-tag"></i> ${typeDisplay}</span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">Assigned To</span>
+                                    <span class="info-value"><i class="fas fa-user"></i> ${memberName}</span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">Project</span>
+                                    <span class="info-value"><i class="fas fa-briefcase"></i> ${projectName}</span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">Timeline</span>
+                                    <span class="info-value"><i class="far fa-calendar-alt"></i> ${event.start_date}</span>
+                                </div>
+                            </div>
+
+                            <div class="event-actions-footer">
+                                <button class="action-btn-sm btn-edit" onclick="event.stopPropagation(); editEventFromDay(${event.id})">
+                                    <i class="fas fa-edit"></i> Edit
+                                </button>
+                                <button class="action-btn-sm btn-delete" onclick="event.stopPropagation(); deleteEventFromDay(${event.id})">
+                                    <i class="fas fa-trash"></i> Delete
+                                </button>
+                            </div>
                         </div>
                     `;
-                    
                     container.appendChild(eventCard);
                 });
             }
-            
-            // Εμφάνιση Modal
             document.getElementById('dayModal').style.display = 'flex';
         }
+        
+        // Μην ξεχάσεις αυτή τη μικρή συνάρτηση για το κλικ
+        function toggleEventCard(card) {
+            // Αν θέλεις να κλείνουν τα άλλα όταν ανοίγει ένα καινούργιο, βγάλε τα σχόλια από κάτω:
+            // document.querySelectorAll('.day-event-card.expanded').forEach(c => { if(c !== card) c.classList.remove('expanded'); });
+            
+            card.classList.toggle('expanded');
+        }
 
+        // Functions for Edit/Delete from Day Modal
+        function editEventFromDay(id) {
+            const event = events.find(e => e.id == id);
+            if (event) {
+                closeDayModal();
+                openModal(event);
+            }
+        }
+
+        function deleteEventFromDay(id) {
+            // Η επιβεβαίωση γίνεται μέσα στην deleteEvent
+            deleteEvent(id).then((success) => {
+                if(success) closeDayModal();
+            });
+        }
+
+        function closeDayModal() {
+            document.getElementById('dayModal').style.display = 'none';
+        }
+        
+        const dayModal = document.getElementById('dayModal');
+        dayModal.addEventListener('click', e => {
+            if (e.target === dayModal) closeDayModal();
+        });
 
         // Navigation
         function previousMonth() {
             currentMonth--;
-            if (currentMonth < 0) {
-                currentMonth = 11;
-                currentYear--;
-            }
+            if (currentMonth < 0) { currentMonth = 11; currentYear--; }
             renderCalendar();
         }
 
         function nextMonth() {
             currentMonth++;
-            if (currentMonth > 11) {
-                currentMonth = 0;
-                currentYear++;
-            }
+            if (currentMonth > 11) { currentMonth = 0; currentYear++; }
             renderCalendar();
         }
 
@@ -1573,12 +1693,11 @@
             renderCalendar();
         }
 
-        // Open Modal
+        // Open Modal (Add/Edit)
         function openModal(event = null) {
             modal.style.display = 'flex';
             
             if (event) {
-                // EDIT MODE
                 currentId = event.id;
                 modalTitle.innerText = 'Edit Event';
                 titleInput.value = event.title;
@@ -1587,7 +1706,7 @@
                 priorityInput.value = event.priority;
                 startDateInput.value = event.start_date;
                 endDateInput.value = event.end_date || '';
-                allDayInput.checked = event.all_day;
+                allDayInput.checked = event.all_day == 1;
                 startTimeInput.value = event.start_time || '';
                 endTimeInput.value = event.end_time || '';
                 statusInput.value = event.status;
@@ -1595,19 +1714,14 @@
                 projectIdInput.value = event.project_id || '';
                 toggleTimeFields();
             } else {
-                // ADD MODE
                 currentId = null;
                 modalTitle.innerText = 'Add Event';
                 document.getElementById('eventForm').reset();
-                if (selectedDate) {
-                    startDateInput.value = selectedDate;
-                }
+                if (selectedDate) startDateInput.value = selectedDate;
                 toggleTimeFields();
             }
         }
 
-
-        // Close Modal
         function closeModal() {
             modal.style.display = 'none';
             document.getElementById('eventForm').reset();
@@ -1615,18 +1729,6 @@
             selectedDate = null;
         }
 
-
-        function closeDayModal() {
-            document.getElementById('dayModal').style.display = 'none';
-        }
-
-        // Close modal when clicking overlay
-        const dayModal = document.getElementById('dayModal');
-            dayModal.addEventListener('click', e => {
-            if (e.target === dayModal) closeDayModal();
-        });
-
-        // Toggle Time Fields
         function toggleTimeFields() {
             const timeFields = document.getElementById('timeFields');
             const allDay = document.getElementById('inputAllDay').checked;
@@ -1639,7 +1741,6 @@
                 timeFields.style.display = 'grid';
             }
         }
-
 
         // Save Event
         async function saveEvent() {
@@ -1686,15 +1787,10 @@
             }
         }
 
-        // Delete Event (called from event dot right-click or dropdown)
+        // Delete Event
         async function deleteEvent(eventId) {
-            // Αν καλείται απευθείας (όχι από το FromDay), ρωτάμε επιβεβαίωση
-            // Αν καλείται από το deleteEventFromDay, η επιβεβαίωση έχει ήδη γίνει, 
-            // αλλά δεν πειράζει να υπάρχει διπλή ασφάλεια ή μπορούμε να το αφαιρέσουμε από εδώ.
-            // Για να μην μπερδευτούμε, αφήνουμε τον κώδικα όπως είναι αλλά βάζουμε return.
-            
-            /* ... υπάρχων κώδικας ... */
-            
+            if (!confirm('Are you sure you want to delete this event?')) return false;
+
             try {
                 const response = await fetch('calendar_handler.php?action=deleteEvent', {
                     method: 'POST',
@@ -1706,7 +1802,7 @@
                 if (result.success) {
                     await loadEvents();
                     closeModal(); // Κλείνει το Edit Modal αν είναι ανοιχτό
-                    return true; // ΕΠΙΣΤΡΟΦΗ ΕΠΙΤΥΧΙΑΣ
+                    return true;
                 } else {
                     alert('Failed to delete event!');
                     return false;
@@ -1718,7 +1814,7 @@
             }
         }
 
-        // Load Team Members & Projects
+        // Load Team & Projects
         async function loadTeamMembers() {
             try {
                 const response = await fetch('team_handler.php?action=getMembers');
@@ -1732,9 +1828,7 @@
                     option.textContent = member.name;
                     assignedToInput.appendChild(option);
                 });
-            } catch (error) {
-                console.error('Error loading team members:', error);
-            }
+            } catch (error) { console.error('Error loading team members:', error); }
         }
 
         async function loadProjects() {
@@ -1750,20 +1844,15 @@
                     option.textContent = project.name;
                     projectIdInput.appendChild(option);
                 });
-            } catch (error) {
-                console.error('Error loading projects:', error);
-            }
+            } catch (error) { console.error('Error loading projects:', error); }
         }
 
-        // Auto-highlight active menu
         function setActiveMenu() {
             const currentPage = window.location.pathname.split('/').pop();
-            
             document.querySelectorAll('.nav-link').forEach(link => {
                 link.classList.remove('bg-indigo-50', 'text-primary-blue', 'font-medium');
                 link.classList.add('text-text-secondary');
             });
-            
             if (currentPage === 'calendar.php') {
                 const calendarLink = document.getElementById('nav-calendar');
                 if (calendarLink) {
@@ -1773,7 +1862,7 @@
             }
         }
 
-        // Load on page load
+        // Initial Load
         window.addEventListener('DOMContentLoaded', function() {
             loadEvents();
             loadTeamMembers();
