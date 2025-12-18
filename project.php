@@ -730,6 +730,7 @@
                 grid-template-columns: 1fr;
             }
         }
+        
 
         .hidden {
             display: none !important;
@@ -767,12 +768,72 @@
             cursor: not-allowed;
         }
 
+            /* ========================================
+        MOBILE HEADER & SEARCH FIX
+        ======================================== */
+        @media (max-width: 768px) {
+            
+            /* 1. Στοίχιση Header */
+            header .max-w-7xl {
+                display: flex !important;
+                flex-direction: row !important;
+                flex-wrap: nowrap !important;
+                align-items: center !important;
+                justify-content: space-between !important;
+                gap: 5px; 
+                position: relative; /* Σημαντικό για το Search */
+            }
+
+            /* 5. Μικραίνουμε λίγο τον τίτλο για να δώσουμε χώρο στο κουμπί */
+            header h1.text-2xl {
+                font-size: 18px !important;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                margin-right: auto;
+            }
+
+            /* 3. Απόκρυψη "Bell" (Καμπανάκι) */
+            header .flex.items-center.space-x-4 > button:first-child {
+                display: none !important;
+            }
+
+            /* 4. Κουμπί "New Project": Να φαίνεται το κείμενο */
+            #new-project-button {
+                padding: 8px 12px !important;
+                font-size: 15px !important; /* Μικρά γράμματα για να χωράει */
+                width: auto !important;
+                display: flex !important;
+                align-items: center !important;
+            }
+            
+            #new-project-button svg {
+                margin-right: 5px !important; /* Επαναφορά του κενού ανάμεσα σε εικονίδιο και κείμενο */
+            }
+
+            /* 5. SEARCH BOX FIX (Για να μη χάνεται) */
+            .search-container {
+                position: static; /* Αφήνουμε το container σταθερό */
+            }
+
+            .search-input {
+                width: 90% !important; /* Πιάνει σχεδόν όλο το πλάτος */
+                left: 5% !important;   /* Κεντραρισμένο */
+                top: 70px !important;  /* Εμφανίζεται ΚΑΤΩ από το header */
+                right: auto !important;
+                position: fixed;       /* Κλειδωμένο στην οθόνη */
+                z-index: 100;          /* Πάνω από όλα */
+                box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+                border: 1px solid #4c64ff;
+            }
+        }
+
     </style>
 </head>
 <body class="bg-light-bg font-sans min-h-screen flex">
 
     <!-- Sidebar / Left Navigation -->
-    <div id="sidebar" class="sidebar fixed inset-y-0 left-0 w-64 bg-sidebar-bg p-4 flex flex-col border-r border-gray-100 lg:relative lg:translate-x-0 overflow-y-auto">
+    <div id="sidebar" class="sidebar fixed inset-y-0 left-0 w-64 bg-sidebar-bg p-4 flex flex-col border-r border-gray-100 lg:relative lg:translate-x-0 transform -translate-x-full transition-transform duration-300 z-50 overflow-y-auto">
         <div class="mb-8 font-bold text-xl text-primary-blue">
             Project
         </div>
@@ -952,6 +1013,29 @@
 
     <script>
         // Sample Data
+
+        // --- MOBILE SIDEBAR LOGIC ---
+        document.addEventListener('DOMContentLoaded', function() {
+            const menuButton = document.getElementById('menu-button');
+            const sidebar = document.getElementById('sidebar');
+
+            if (menuButton && sidebar) {
+                // Toggle Menu
+                menuButton.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    sidebar.classList.toggle('-translate-x-full');
+                });
+
+                // Close when clicking outside
+                document.addEventListener('click', (e) => {
+                    if (!sidebar.classList.contains('-translate-x-full') && 
+                        !sidebar.contains(e.target) && 
+                        window.innerWidth < 1024) {
+                        sidebar.classList.add('-translate-x-full');
+                    }
+                });
+            }
+        });
 
      // Projects από Database
      let projects = [];

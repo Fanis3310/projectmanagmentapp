@@ -927,7 +927,7 @@
             /* Στυλ "Μεγάλου Κουμπιού" */
             width: auto !important;     /* Όχι όλο το πλάτος, όσο χρειάζεται */
             padding: 8px 16px !important; /* Άνετο padding */
-            font-size: 14px !important;
+            font-size: 15px !important;
             white-space: nowrap !important; /* Να φαίνεται όλο το κείμενο "Add Event" */
             
             /* Να μην ζουλιέται */
@@ -1077,6 +1077,34 @@
             justify-content: center;
             display: flex;
         }
+    }
+
+
+    /* ========================================
+       TODAY HIGHLIGHT ANIMATION
+       ======================================== */
+    @keyframes highlightPulse {
+        0% {
+            box-shadow: 0 0 0 0 rgba(76, 100, 255, 0.7);
+            transform: scale(1);
+            border-color: #4c64ff;
+        }
+        50% {
+            box-shadow: 0 0 0 15px rgba(76, 100, 255, 0); /* Το "κύμα" που φεύγει έξω */
+            transform: scale(1.05); /* Ελαφριά μεγέθυνση */
+            border-color: #4c64ff;
+        }
+        100% {
+            box-shadow: 0 0 0 0 rgba(76, 100, 255, 0);
+            transform: scale(1);
+            border-color: #4c64ff;
+        }
+    }
+
+    .highlight-active {
+        animation: highlightPulse 1.5s ease-out;
+        z-index: 20; /* Να βγει πάνω από τα άλλα */
+        border-color: #4c64ff !important; /* Σιγουρεύουμε ότι το περίγραμμα είναι μπλε */
     }
 </style>
 
@@ -1688,9 +1716,36 @@
 
         function goToToday() {
             const today = new Date();
+            
+            // 1. Ενημέρωση μήνα/έτους
             currentMonth = today.getMonth();
             currentYear = today.getFullYear();
+            
+            // 2. Ξαναφτιάχνουμε το ημερολόγιο
             renderCalendar();
+
+            // 3. Βρίσκουμε τη σημερινή μέρα και κάνουμε Scroll & Highlight
+            // Χρησιμοποιούμε setTimeout για να προλάβει να "ζωγραφιστεί" το ημερολόγιο
+            setTimeout(() => {
+                const todayCell = document.querySelector('.calendar-day.today');
+                
+                if (todayCell) {
+                    // SCROLL: Σκρολάρει ομαλά ώστε το κελί να έρθει στο κέντρο της οθόνης
+                    todayCell.scrollIntoView({ 
+                        behavior: 'smooth', 
+                        block: 'center',
+                        inline: 'center'
+                    });
+
+                    // HIGHLIGHT: Προσθέτουμε την κλάση για το εφέ
+                    todayCell.classList.add('highlight-active');
+
+                    // Αφαιρούμε την κλάση μετά από 2 δευτερόλεπτα για να σταματήσει το εφέ
+                    setTimeout(() => {
+                        todayCell.classList.remove('highlight-active');
+                    }, 2000);
+                }
+            }, 100);
         }
 
         // Open Modal (Add/Edit)

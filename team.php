@@ -377,13 +377,57 @@
             margin-bottom: 15px;
             opacity: 0.5;
         }
+
+        /* ========================================
+       MOBILE HEADER (Ίδιο με Calendar)
+       ======================================== */
+        @media (max-width: 768px) {
+            
+            /* 1. Στοίχιση Header σε μία γραμμή */
+            header .max-w-7xl {
+                display: flex !important;
+                flex-direction: row !important;
+                flex-wrap: nowrap !important;
+                align-items: center !important;
+                justify-content: space-between !important;
+                gap: 5px; 
+                padding-right: 0;
+            }
+
+            /* 2. Τίτλος: Μικραίνει για να χωράει */
+            header h1.text-2xl {
+                font-size: 18px !important;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                margin-right: auto;
+            }
+
+            /* 3. Απόκρυψη του "Bell" (Καμπανάκι) για χώρο */
+            header .flex.items-center.space-x-4 > button:first-child {
+                display: none !important;
+            }
+
+            /* 4. Κουμπί "Add Member": Προσαρμογή μεγέθους */
+            #new-member-button {
+                display: flex !important;
+                align-items: center;
+                justify-content: center;
+                width: auto !important;     
+                padding: 8px 12px !important;
+                font-size: 15px !important;
+                white-space: nowrap !important;
+                flex-shrink: 0; 
+                margin-left: 5px;
+            }
+        }
     </style>
 </head>
 <body class="bg-light-bg font-sans min-h-screen flex">
 
     <!-- Sidebar -->
     
-    <div id="sidebar" class="sidebar fixed inset-y-0 left-0 w-64 bg-sidebar-bg p-4 flex flex-col border-r border-gray-100 lg:relative lg:translate-x-0 overflow-y-auto">
+    <div id="sidebar" class="sidebar fixed inset-y-0 left-0 w-64 bg-sidebar-bg p-4 flex flex-col border-r border-gray-100 lg:relative lg:translate-x-0 transform -translate-x-full transition-transform duration-300 z-50 overflow-y-auto">
         <div class="mb-8 font-bold text-xl text-primary-blue">Project</div>
         
         <nav class="flex-grow">
@@ -535,7 +579,41 @@
     </div>
 
     <script>
-        // Team members array
+        // --- 1. SIDEBAR MOBILE TOGGLE (Διορθωμένο) ---
+        document.addEventListener('DOMContentLoaded', function() {
+            const menuButton = document.getElementById('menu-button');
+            const sidebar = document.getElementById('sidebar');
+
+            // Έλεγχος αν υπάρχουν τα στοιχεία
+            if (menuButton && sidebar) {
+                // Άνοιγμα/Κλείσιμο με το κουμπί
+                menuButton.addEventListener('click', (e) => {
+                    // Σταματάμε το κλικ από το να πάει στο document (για να μην κλείσει αμέσως)
+                    e.stopPropagation();
+                    // Αφαιρεί/Προσθέτει την κλάση που κρύβει το sidebar
+                    sidebar.classList.toggle('-translate-x-full');
+                });
+
+                // Κλείσιμο όταν πατάμε ΟΠΟΥΔΗΠΟΤΕ αλλού
+                document.addEventListener('click', (e) => {
+                    // Αν το sidebar είναι ανοιχτό (δεν έχει την κλάση hidden)...
+                    // ...και το κλικ ΔΕΝ έγινε μέσα στο sidebar...
+                    // ...και είμαστε σε κινητό (πλάτος < 1024)
+                    if (!sidebar.classList.contains('-translate-x-full') && 
+                        !sidebar.contains(e.target) && 
+                        window.innerWidth < 1024) {
+                        sidebar.classList.add('-translate-x-full');
+                    }
+                });
+            } else {
+                console.error("Sidebar or Menu Button not found!");
+            }
+
+            // Φόρτωση μελών
+            loadMembers();
+        });
+
+        // --- 2. ΥΠΟΛΟΙΠΕΣ ΛΕΙΤΟΥΡΓΙΕΣ (Team Logic) ---
         let members = [];
         let currentId = null;
         let currentDropdown = null;
@@ -551,45 +629,38 @@
         const statusInput = document.getElementById('inputStatus');
         const noResults = document.getElementById('noResults');
 
-        // Load members from database
+        // Load members
         async function loadMembers() {
             try {
                 const response = await fetch('team_handler.php?action=getMembers');
                 const data = await response.json();
                 members = data;
                 renderMembers();
-            } catch (error) {
-                console.error('Error loading members:', error);
-                alert('Failed to load team members!');
-            }
+            } catch (error) { console.error(error); }
         }
 
-        // Render members to grid
+        // Render members
         function renderMembers() {
             grid.innerHTML = '';
-
             if (members.length === 0) {
                 grid.style.display = 'none';
                 noResults.classList.remove('hidden');
                 return;
             }
-
             grid.style.display = 'grid';
             noResults.classList.add('hidden');
 
             members.forEach(member => {
-                const initials = member.name.split(' ').map(n => n[0]).join('').toUpperCase();
+                const initials = member.name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
                 const statusClass = `status-${member.status}`;
-                const statusText = member.status.charAt(0).toUpperCase() + member.status.slice(1);
-
+                
                 const card = document.createElement('div');
                 card.className = 'team-card';
-
                 card.innerHTML = `
                     <div class="card-header">
-                        <div class="status-badge ${statusClass}">${statusText}</div>
+                        <div class="status-badge ${statusClass}">${member.status}</div>
                         <div class="dropdown">
-                            <div class="dropdown-toggle" onclick="toggleDropdown(event, ${member.id})">
+                            <div class="dropdown-toggle" onclick="toggleDropdown(event)">
                                 <i class="fa-solid fa-ellipsis" style="color: #b2bec3;"></i>
                             </div>
                             <div class="dropdown-menu">
@@ -604,60 +675,43 @@
                     </div>
                     <div class="member-avatar">${initials}</div>
                     <div class="member-name">${member.name}</div>
-                    <div class="member-role">${member.role || 'No role assigned'}</div>
+                    <div class="member-role">${member.role || '-'}</div>
                     <div class="member-info">
-                        <div class="info-item">
-                            <i class="fa-solid fa-envelope"></i>
-                            <span>${member.email}</span>
-                        </div>
-                        ${member.department ? `
-                        <div class="info-item">
-                            <i class="fa-solid fa-building"></i>
-                            <span>${member.department}</span>
-                        </div>
-                        ` : ''}
-                        ${member.phone ? `
-                        <div class="info-item">
-                            <i class="fa-solid fa-phone"></i>
-                            <span>${member.phone}</span>
-                        </div>
-                        ` : ''}
+                        <div class="info-item"><i class="fa-solid fa-envelope"></i> ${member.email}</div>
+                        ${member.phone ? `<div class="info-item"><i class="fa-solid fa-phone"></i> ${member.phone}</div>` : ''}
                     </div>
                 `;
-
                 grid.appendChild(card);
             });
         }
 
-        // Toggle dropdown
-        function toggleDropdown(event, memberId) {
+        // Dropdown Logic
+        function toggleDropdown(event) {
             event.stopPropagation();
             const dropdown = event.currentTarget.nextElementSibling;
-
+            
+            // Κλείσε το προηγούμενο αν υπάρχει
             if (currentDropdown && currentDropdown !== dropdown) {
                 currentDropdown.classList.remove('active');
             }
-
+            
             dropdown.classList.toggle('active');
             currentDropdown = dropdown.classList.contains('active') ? dropdown : null;
         }
 
-        // Close dropdown when clicking outside
-        document.addEventListener('click', function(e) {
-            if (currentDropdown && !e.target.closest('.dropdown')) {
+        document.addEventListener('click', () => {
+            if (currentDropdown) {
                 currentDropdown.classList.remove('active');
                 currentDropdown = null;
             }
         });
 
-        // Open modal
+        // Modal Logic
         function openModal(member = null) {
             modal.classList.add('active');
-
             if (member) {
-                // EDIT MODE
                 currentId = member.id;
-                modalTitle.innerText = 'Edit Team Member';
+                modalTitle.innerText = 'Edit Member';
                 nameInput.value = member.name;
                 emailInput.value = member.email;
                 roleInput.value = member.role || '';
@@ -665,103 +719,51 @@
                 phoneInput.value = member.phone || '';
                 statusInput.value = member.status;
             } else {
-                // NEW MODE
                 currentId = null;
-                modalTitle.innerText = 'Add Team Member';
-                nameInput.value = '';
-                emailInput.value = '';
-                roleInput.value = '';
-                departmentInput.value = '';
-                phoneInput.value = '';
-                statusInput.value = 'active';
+                modalTitle.innerText = 'Add Member';
+                document.getElementById('memberForm').reset();
             }
         }
 
-        // Close modal
         function closeModal() {
             modal.classList.remove('active');
         }
 
-        // Close modal when clicking overlay
         modal.addEventListener('click', e => {
             if (e.target === modal) closeModal();
         });
 
-        // Save member
+        // Save Logic
         async function saveMember() {
-            const name = nameInput.value.trim();
-            const email = emailInput.value.trim();
-            const role = roleInput.value.trim();
-            const department = departmentInput.value.trim();
-            const phone = phoneInput.value.trim();
-            const status = statusInput.value;
-
-            if (!name || !email) {
-                return alert("Name and Email are required!");
-            }
-
-            const memberData = {
+            const data = {
                 id: currentId,
-                name: name,
-                email: email,
-                role: role,
-                department: department,
-                phone: phone,
-                status: status
+                name: nameInput.value,
+                email: emailInput.value,
+                role: roleInput.value,
+                department: departmentInput.value,
+                phone: phoneInput.value,
+                status: statusInput.value
             };
+            
+            await fetch('team_handler.php?action=saveMember', {
+                method: 'POST',
+                body: JSON.stringify(data)
+            });
+            closeModal();
+            loadMembers();
+        }
 
-            try {
-                const response = await fetch('team_handler.php?action=saveMember', {
+        // Delete Logic
+        async function deleteMember(event, id) {
+            event.stopPropagation(); // Stop clicking card
+            if(confirm('Delete member?')) {
+                await fetch('team_handler.php?action=deleteMember', {
                     method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify(memberData)
+                    body: JSON.stringify({id})
                 });
-                const result = await response.json();
-
-                if (result.success) {
-                    await loadMembers();
-                    closeModal();
-                } else {
-                    alert('Failed to save member: ' + (result.error || 'Unknown error'));
-                }
-            } catch (error) {
-                console.error('Error saving member:', error);
-                alert('Failed to save member!');
+                loadMembers();
             }
         }
-
-        // Delete member
-        async function deleteMember(event, memberId) {
-            event.stopPropagation();
-
-            if (confirm('Are you sure you want to delete this team member?')) {
-                try {
-                    const response = await fetch('team_handler.php?action=deleteMember', {
-                        method: 'POST',
-                        headers: {'Content-Type': 'application/json'},
-                        body: JSON.stringify({id: memberId})
-                    });
-                    const result = await response.json();
-
-                    if (result.success) {
-                        await loadMembers();
-                    } else {
-                        alert('Failed to delete member!');
-                    }
-                } catch (error) {
-                    console.error('Error deleting member:', error);
-                    alert('Failed to delete member!');
-                }
-
-                if (currentDropdown) {
-                    currentDropdown.classList.remove('active');
-                    currentDropdown = null;
-                }
-            }
-        }
-
-        // Load on page load
-        window.addEventListener('DOMContentLoaded', loadMembers);
     </script>
 </body>
 </html>
