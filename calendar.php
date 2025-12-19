@@ -129,26 +129,16 @@
         justify-content: space-between;
         align-items: center;
         margin-bottom: 30px;
-        
-        /* Ίδιο φόντο με το container */
         background: var(--white); 
-        
-        /* Ίδιες γωνίες με το container (16px) */
         border-radius: 16px; 
-        
         padding: 25px 35px;
-        
-        /* Ίδια σκιά ακριβώς με το calendar-grid-container */
         box-shadow: var(--shadow);
-        
-        /* Αφαιρούμε το περίγραμμα για να είναι ίδιο με το container */
         border: none; 
     }
 
     .calendar-title {
         font-size: 28px;
         font-weight: 700;
-        /* Το βασικό χρώμα του Add Event (#4c64ff) */
         color: #4c64ff; 
         background: none;
         -webkit-background-clip: initial;
@@ -211,7 +201,6 @@
     }
 
     .today-btn {
-        /* Ανοιχτό/Βασικό χρώμα (#4c64ff) */
         background: #4c64ff; 
         color: var(--white);
         border: none;
@@ -237,7 +226,6 @@
     .today-btn:hover {
         background: #3d52cc; 
         transform: translateY(-3px) scale(1.05);
-        /* Σκιά στο ίδιο χρώμα */
         box-shadow: 0 8px 20px rgba(76, 100, 255, 0.4); 
     }
 
@@ -286,12 +274,10 @@
         display: grid;
         grid-template-columns: repeat(7, 1fr);
         gap: 10px;
-        /* Κλειδώνει όλα τα κελιά στο ίδιο ύψος */
         grid-auto-rows: 1fr; 
     }
 
     .calendar-day {
-        /* ΣΤΑΘΕΡΗ ΔΟΜΗ ΓΙΑ ΟΛΑ */
         display: flex;
         flex-direction: column;
         justify-content: flex-start;
@@ -301,8 +287,6 @@
         
         background: #f8f9fa;
         border-radius: 12px;
-        
-        /* ΔΙΑΦΑΝΕΣ περίγραμμα 2px (πιάνει τον ίδιο χώρο με το Today) */
         border: 2px solid transparent; 
         
         cursor: pointer;
@@ -311,7 +295,7 @@
     }
 
     .calendar-day:hover {
-        border-color: #e2e8f0; /* Γκρι περίγραμμα στο hover των απλών */
+        border-color: #e2e8f0; 
         transform: translateY(-4px);
         box-shadow: 0 8px 16px rgba(0, 0, 0, 0.05);
     }
@@ -323,14 +307,11 @@
 
     .calendar-day.today {
         background: #ffffff !important; 
-        /* Το μπλε περίγραμμα αντικαθιστά το διαφανές (ίδιο πάχος) */
         border-color: #4c64ff !important; 
     }
 
     .calendar-day.today .day-number {
         color: #4c64ff !important; 
-        /* font-size: 16px;  <-- ΚΛΗΡΟΝΟΜΕΙΤΑΙ (για να μην χαλάει η συμμετρία) */
-        /* font-weight: 700; <-- ΚΛΗΡΟΝΟΜΕΙΤΑΙ */
     }
 
     .calendar-day.today:hover {
@@ -345,9 +326,9 @@
     }
 
     .day-number {
-        font-size: 16px;    /* Ίδιο μέγεθος παντού */
-        font-weight: 700;   /* Ίδιο πάχος παντού */
-        margin-bottom: 8px; /* Ίδιο κενό από τα events */
+        font-size: 16px;    
+        font-weight: 700;   
+        margin-bottom: 8px; 
         color: var(--text-dark);
         flex-shrink: 0;
     }
@@ -365,9 +346,9 @@
        ======================================== */
 
     .event-dot {
-        height: 24px; /* ΣΤΑΘΕΡΟ ΥΨΟΣ: Είτε 1 είτε 3, θα είναι ίδια */
+        height: 24px; 
         display: flex;
-        align-items: center; /* ΚΕΝΤΡΑΡΙΣΜΑ ΚΕΙΜΕΝΟΥ ΚΑΘΕΤΑ */
+        align-items: center; 
         padding: 0 8px;
         border-radius: 6px;
         font-size: 11px;
@@ -376,7 +357,7 @@
         overflow: hidden;
         text-overflow: ellipsis;
         transition: all 0.2s;
-        width: 100%; /* Πιάνει όλο το πλάτος */
+        width: 100%; 
     }
 
     .event-dot:hover {
@@ -391,22 +372,22 @@
     .event-dot.deadline { background: var(--deadline-color); }
 
     .more-events {
-        /* 1. ΙΔΙΕΣ ΔΙΑΣΤΑΣΕΙΣ ME TA EVENTS */
-        height: 24px;       /* Ίδιο ύψος με το .event-dot */
-        width: 100%;        /* Πιάνει όλο το πλάτος */
-        border-radius: 6px; /* Ίδια στρογγυλάδα */
-        padding: 0 8px;     /* Ίδιο padding */
         
-        /* 2. ΚΕΝΤΡΑΡΙΣΜΑ & ΣΤΥΛ */
+        height: 24px;       
+        width: 100%;        
+        border-radius: 6px; 
+        padding: 0 8px;    
+        
+      
         display: flex;
         align-items: center;
-        justify-content: center; /* Κεντράρισμα του κειμένου */
+        justify-content: center; 
         
         font-size: 11px;
         font-weight: 700;
-        margin-top: auto; /* Κολλάει στο κάτω μέρος αν υπάρχει κενό */
+        margin-top: auto; 
         
-        /* 3. ΧΡΩΜΑΤΑ (Blue Theme) */
+    
         color: #4c64ff; 
         background: rgba(76, 100, 255, 0.1); 
         
@@ -566,7 +547,7 @@
         gap: 12px;
     }
 
-    /* ΚΑΡΤΑ (Container) */
+    
     .day-event-card {
         background: var(--white);
         border-radius: 12px;
@@ -583,7 +564,7 @@
         transform: translateY(-2px);
     }
 
-    /* HEADER (ΑΥΤΟ ΦΑΙΝΕΤΑΙ ΠΑΝΤΑ) */
+   
     .day-event-header {
         padding: 16px 20px;
         display: flex;
@@ -628,25 +609,25 @@
         color: var(--primary-color);
     }
 
-    /* DETAILS (ΑΥΤΑ ΕΙΝΑΙ ΚΡΥΦΑ - ΕΜΦΑΝΙΖΟΝΤΑΙ ΜΟΝΟ ΣΤΟ EXPANDED) */
+    
     .day-event-details {
-        max-height: 0;       /* Κλειστό ύψος */
-        opacity: 0;          /* Αόρατο */
+        max-height: 0;      
+        opacity: 0;         
         overflow: hidden;
         transition: all 0.3s ease-in-out;
         background: #f8fafc; 
         border-top: 1px solid #f1f5f9;
-        padding: 0 20px;     /* Μηδέν padding όταν είναι κλειστό */
+        padding: 0 20px;     
     }
 
-    /* Όταν ανοίγει: */
+   
     .day-event-card.expanded .day-event-details {
-        max-height: 1000px;  /* Μεγάλο ύψος για να χωρέσουν όλα */
+        max-height: 1000px;  
         opacity: 1;
-        padding: 20px;       /* Επαναφορά padding */
+        padding: 20px;      
     }
 
-    /* Στυλ για τα περιεχόμενα (Περιγραφή, Grid, Κουμπιά) */
+    
     .event-desc-text {
         font-size: 14px;
         color: #475569;
@@ -878,9 +859,9 @@
        ======================================== */
     @media (max-width: 768px) {
         
-        /* --- 1. Γενικές Ρυθμίσεις --- */
+       
         body, html {
-            overflow-x: hidden; /* Απαγορεύουμε το οριζόντιο κούνημα */
+            overflow-x: hidden; 
         }
 
         .main-content {
@@ -889,142 +870,130 @@
 
         .content-area {
             padding: 10px;
-            padding-bottom: 80px; /* Χώρος κάτω για να μη κρύβεται τίποτα */
+            padding-bottom: 80px; 
         }
 
-       /* --- 2. Κεντρικό Header (Header όπως στο Project) --- */
+      
         header .max-w-7xl {
             display: flex !important;
-            flex-direction: row !important; /* Αυστηρά σε μία ευθεία */
-            flex-wrap: nowrap !important;   /* Απαγορεύεται να κατέβει κάτω */
+            flex-direction: row !important;
+            flex-wrap: nowrap !important;  
             align-items: center !important;
             justify-content: space-between !important;
             gap: 5px; 
-            padding-right: 0; /* Κερδίζουμε λίγο χώρο δεξιά */
+            padding-right: 0; 
         }
 
-        /* Τίτλος: Τον μικραίνουμε ελάχιστα για να χωράει */
+        
         header h1.text-2xl {
             font-size: 18px !important;
-            white-space: nowrap;      /* Όχι αλλαγή γραμμής */
-            overflow: hidden;         /* Αν είναι τεράστιος, κόβεται */
+            white-space: nowrap;      
+            overflow: hidden;         
             text-overflow: ellipsis;
-            margin-right: auto;       /* Σπρώχνει τα δεξιά στοιχεία στην άκρη */
+            margin-right: auto;       
         }
 
-        /* ΚΡΥΒΟΥΜΕ το μικρό εικονίδιο (φίλτρο) δίπλα στο κουμπί 
-           για να αφήσουμε χώρο για το Μεγάλο Κουμπί */
         header .flex.items-center.space-x-4 > button:first-child {
             display: none !important;
         }
 
-        /* Το κουμπί Add Event: Μεγάλο, Μπλε και Ολόκληρο */
+        
         #new-event-button {
             display: flex !important;
             align-items: center;
             justify-content: center;
             
-            /* Στυλ "Μεγάλου Κουμπιού" */
-            width: auto !important;     /* Όχι όλο το πλάτος, όσο χρειάζεται */
-            padding: 8px 16px !important; /* Άνετο padding */
-            font-size: 15px !important;
-            white-space: nowrap !important; /* Να φαίνεται όλο το κείμενο "Add Event" */
             
-            /* Να μην ζουλιέται */
+            width: auto !important;     
+            padding: 8px 16px !important; 
+            font-size: 15px !important;
+            white-space: nowrap !important; 
+            
+           
             flex-shrink: 0; 
             margin-left: 5px;
         }
         
-        /* Κρύβουμε το εικονίδιο (+) μέσα στο κουμπί αν θέλουμε πιο καθαρό look, 
-           αλλιώς το αφήνουμε. Εδώ το αφήνω για να μοιάζει με το Project. */
+    
         #new-event-button svg {
             display: block; 
             margin-right: 5px;
         }
         
-        /* Κρύβουμε το κείμενο "Add Event" και αφήνουμε μόνο το εικονίδιο αν δεν χωράει */
+    
         #new-event-button {
             padding: 8px 12px;
             font-size: 13px;
             white-space: nowrap;
         }
 
-        /* --- 3. Calendar Header (Μήνας & Κουμπιά) --- */
+        
         .calendar-header {
-            flex-direction: column; /* Κάθετη διάταξη */
+            flex-direction: column; 
             gap: 15px;
             padding: 15px 10px;
             align-items: center;
         }
 
-        /* Ο Μήνας πάνω μόνος του */
+       
         .calendar-title {
             font-size: 22px;
             text-align: center;
             width: 100%;
         }
 
-        /* Τα κουμπιά σε ΜΙΑ ΕΥΘΕΙΑ από κάτω */
+       
         .calendar-nav {
             display: flex;
             width: 100%;
-            justify-content: space-between; /* Άκρη-άκρη */
+            justify-content: space-between; 
             gap: 10px;
         }
 
         .nav-btn {
-            flex: 1; /* Να πιάνουν ίσο χώρο */
+            flex: 1; 
             justify-content: center;
             padding: 10px 5px;
             font-size: 13px;
         }
 
-        /* --- 4. Πλέγμα Ημερολογίου (3 Στήλες) --- */
+        
         .calendar-grid {
         display: grid;
         grid-template-columns: repeat(7, 1fr);
         gap: 10px;
         
-        /* ΤΟ ΜΥΣΤΙΚΟ: Κάνει όλες τις γραμμές να έχουν ΑΚΡΙΒΩΣ το ίδιο ύψος */
+        
         grid-auto-rows: 1fr; 
         
-        /* Αφαιρούμε το min-height: 600px για να το αφήσουμε να προσαρμόζεται στο περιεχόμενο */
+    
         min-height: auto; 
        }
 
-        /* ΚΡΥΒΟΥΜΕ τις μέρες της εβδομάδας (Mon, Tue...) γιατί δεν ταιριάζουν με 3 στήλες */
+    
         .calendar-weekdays {
             display: none;
         }
 
         .calendar-grid {
             display: grid;
-            /* ΤΟ ΖΗΤΟΥΜΕΝΟ: 3 Στήλες */
             grid-template-columns: repeat(3, 1fr) !important; 
             gap: 8px;
             min-height: auto;
-            min-width: unset; /* Αφαιρούμε το πλάτος για να χωράει στην οθόνη */
+            min-width: unset; 
         }
 
         .calendar-day {
             background: #f8f9fa;
             border-radius: 12px;
             padding: 8px;
-            
-            /* Σημαντικό: Να πιάνει όλο το ύψος του κελιού του grid */
             height: 100%; 
-            
-            /* Ελάχιστο ύψος για να χωράνε άνετα 3 events (όπως το Today) */
             min-height: 140px; 
             
             cursor: pointer;
             transition: all 0.2s ease;
             position: relative;
-            
-            /* Διαφανές περίγραμμα 2px για να πιάνει τον ίδιο χώρο με το Today */
             border: 2px solid transparent; 
-            
-            /* Flexbox για να στοιχίζονται όλα ίδια */
             display: flex;
             flex-direction: column;
             justify-content: flex-start;
@@ -1035,17 +1004,16 @@
             font-weight: 700;
             color: var(--text-dark);
             margin-bottom: 8px;
-            flex-shrink: 0; /* Δεν ζουλιέται ποτέ */
-        }
+            flex-shrink: 0; 
 
-        /* Μικραίνουμε τα events για να χωράνε */
+        
         .event-dot {
             font-size: 10px;
             padding: 3px 6px;
             margin-bottom: 2px;
         }
 
-        /* --- 5. Modal Styles (Αμετάβλητα για σωστή λειτουργία) --- */
+       
         .modal-content {
             width: 95% !important;
             max-width: 95% !important;
@@ -1090,8 +1058,8 @@
             border-color: #4c64ff;
         }
         50% {
-            box-shadow: 0 0 0 15px rgba(76, 100, 255, 0); /* Το "κύμα" που φεύγει έξω */
-            transform: scale(1.05); /* Ελαφριά μεγέθυνση */
+            box-shadow: 0 0 0 15px rgba(76, 100, 255, 0); 
+            transform: scale(1.05); 
             border-color: #4c64ff;
         }
         100% {
@@ -1103,8 +1071,8 @@
 
     .highlight-active {
         animation: highlightPulse 1.5s ease-out;
-        z-index: 20; /* Να βγει πάνω από τα άλλα */
-        border-color: #4c64ff !important; /* Σιγουρεύουμε ότι το περίγραμμα είναι μπλε */
+        z-index: 20; 
+        border-color: #4c64ff !important; 
     }
 </style>
 
@@ -1371,11 +1339,10 @@
 
 
     <script>
-        // 1. ΟΡΙΣΜΟΣ ΧΡΩΜΑΤΩΝ ΒΑΣΕΙ PRIORITY (Το βάζουμε στην αρχή για να το βρίσκει πάντα)
         const priorityColors = {
-            'low': '#0097a7',      // Cyan (Ίδιο με το "Active" του Project)
-            'medium': '#f59e0b',   // Orange (Ίδιο με το "Planning" του Project)
-            'high': '#ef4444'      // Red (Ίδιο με το "Delete/Inactive" για επείγοντα)
+            'low': '#0097a7',      
+            'medium': '#f59e0b',  
+            'high': '#ef4444'     
         };
 
         // Global Variables
@@ -1439,7 +1406,6 @@
                 renderCalendar();
             } catch (error) {
                 console.error('Error loading events:', error);
-                // Δεν βγάζουμε alert για να μην ενοχλεί αν είναι προσωρινό το θέμα
             }
         }
 
@@ -1509,10 +1475,6 @@
 
             const eventsContainer = document.createElement('div');
             eventsContainer.className = 'day-events';
-
-            // ΛΟΓΙΚΗ ΓΙΑ 3 EVENTS:
-            // Αν έχουμε μέχρι 3 events, τα δείχνουμε όλα (χωράνε ακριβώς).
-            // Αν έχουμε 4+, δείχνουμε τα 2 και το κουμπί "More".
             let limit = 3;
             if (dayEvents.length > 3) {
                 limit = 2;
@@ -1523,7 +1485,7 @@
                 eventDot.className = 'event-dot';
                 eventDot.textContent = event.title;
                 
-                // Χρώματα Project Style
+            
                 const prio = event.priority ? event.priority.toLowerCase() : 'medium';
                 const color = priorityColors[prio] || '#0097a7'; 
                 
@@ -1533,7 +1495,7 @@
                 eventsContainer.appendChild(eventDot);
             });
 
-            // Αν κόψαμε events, δείχνουμε το κουμπί
+         
             if (dayEvents.length > limit) {
                 const moreText = document.createElement('div');
                 moreText.className = 'more-events';
@@ -1552,7 +1514,7 @@
             return dayElement;
         }
 
-        // Show Day Details (Full Info Hidden in Accordion)
+        
         function showDayEvents(date, dayEvents) {
             const dateObj = new Date(date + 'T00:00:00');
             const formattedDate = dateObj.toLocaleDateString('en-US', { 
@@ -1578,7 +1540,7 @@
                 noEventsMsg.style.display = 'none';
                 
                 dayEvents.forEach((event) => {
-                    // --- Ετοιμασία Δεδομένων ---
+                   
                     const prio = event.priority ? event.priority.toLowerCase() : 'medium';
                     const color = priorityColors[prio] || '#4c64ff';
                     const priorityDisplay = prio.charAt(0).toUpperCase() + prio.slice(1);
@@ -1588,7 +1550,7 @@
                     const timeHeader = event.all_day == 1 ? 'All Day' : 
                         (event.start_time ? event.start_time.substring(0, 5) : 'No time');
 
-                    // Ανάκτηση ονομάτων από ID
+                   
                     let projectName = 'No Project';
                     if (event.project_id) {
                         const proj = projects.find(p => p.id == event.project_id);
@@ -1668,15 +1630,14 @@
             document.getElementById('dayModal').style.display = 'flex';
         }
         
-        // Μην ξεχάσεις αυτή τη μικρή συνάρτηση για το κλικ
+        
         function toggleEventCard(card) {
-            // Αν θέλεις να κλείνουν τα άλλα όταν ανοίγει ένα καινούργιο, βγάλε τα σχόλια από κάτω:
-            // document.querySelectorAll('.day-event-card.expanded').forEach(c => { if(c !== card) c.classList.remove('expanded'); });
+      
             
             card.classList.toggle('expanded');
         }
 
-        // Functions for Edit/Delete from Day Modal
+  
         function editEventFromDay(id) {
             const event = events.find(e => e.id == id);
             if (event) {
@@ -1686,7 +1647,6 @@
         }
 
         function deleteEventFromDay(id) {
-            // Η επιβεβαίωση γίνεται μέσα στην deleteEvent
             deleteEvent(id).then((success) => {
                 if(success) closeDayModal();
             });
@@ -1717,30 +1677,25 @@
         function goToToday() {
             const today = new Date();
             
-            // 1. Ενημέρωση μήνα/έτους
+        
             currentMonth = today.getMonth();
             currentYear = today.getFullYear();
             
-            // 2. Ξαναφτιάχνουμε το ημερολόγιο
+          
             renderCalendar();
 
-            // 3. Βρίσκουμε τη σημερινή μέρα και κάνουμε Scroll & Highlight
-            // Χρησιμοποιούμε setTimeout για να προλάβει να "ζωγραφιστεί" το ημερολόγιο
+         
             setTimeout(() => {
                 const todayCell = document.querySelector('.calendar-day.today');
                 
                 if (todayCell) {
-                    // SCROLL: Σκρολάρει ομαλά ώστε το κελί να έρθει στο κέντρο της οθόνης
                     todayCell.scrollIntoView({ 
                         behavior: 'smooth', 
                         block: 'center',
                         inline: 'center'
                     });
 
-                    // HIGHLIGHT: Προσθέτουμε την κλάση για το εφέ
                     todayCell.classList.add('highlight-active');
-
-                    // Αφαιρούμε την κλάση μετά από 2 δευτερόλεπτα για να σταματήσει το εφέ
                     setTimeout(() => {
                         todayCell.classList.remove('highlight-active');
                     }, 2000);
@@ -1856,7 +1811,7 @@
 
                 if (result.success) {
                     await loadEvents();
-                    closeModal(); // Κλείνει το Edit Modal αν είναι ανοιχτό
+                    closeModal(); 
                     return true;
                 } else {
                     alert('Failed to delete event!');

@@ -773,7 +773,7 @@
         ======================================== */
         @media (max-width: 768px) {
             
-            /* 1. Στοίχιση Header */
+          
             header .max-w-7xl {
                 display: flex !important;
                 flex-direction: row !important;
@@ -781,10 +781,10 @@
                 align-items: center !important;
                 justify-content: space-between !important;
                 gap: 5px; 
-                position: relative; /* Σημαντικό για το Search */
+                position: relative; 
             }
 
-            /* 5. Μικραίνουμε λίγο τον τίτλο για να δώσουμε χώρο στο κουμπί */
+          
             header h1.text-2xl {
                 font-size: 18px !important;
                 white-space: nowrap;
@@ -793,36 +793,36 @@
                 margin-right: auto;
             }
 
-            /* 3. Απόκρυψη "Bell" (Καμπανάκι) */
+         
             header .flex.items-center.space-x-4 > button:first-child {
                 display: none !important;
             }
 
-            /* 4. Κουμπί "New Project": Να φαίνεται το κείμενο */
+          
             #new-project-button {
                 padding: 8px 12px !important;
-                font-size: 15px !important; /* Μικρά γράμματα για να χωράει */
+                font-size: 15px !important; 
                 width: auto !important;
                 display: flex !important;
                 align-items: center !important;
             }
             
             #new-project-button svg {
-                margin-right: 5px !important; /* Επαναφορά του κενού ανάμεσα σε εικονίδιο και κείμενο */
+                margin-right: 5px !important; 
             }
 
-            /* 5. SEARCH BOX FIX (Για να μη χάνεται) */
+          
             .search-container {
-                position: static; /* Αφήνουμε το container σταθερό */
+                position: static; 
             }
 
             .search-input {
-                width: 90% !important; /* Πιάνει σχεδόν όλο το πλάτος */
-                left: 5% !important;   /* Κεντραρισμένο */
-                top: 70px !important;  /* Εμφανίζεται ΚΑΤΩ από το header */
+                width: 90% !important; 
+                left: 5% !important;   
+                top: 70px !important;  
                 right: auto !important;
-                position: fixed;       /* Κλειδωμένο στην οθόνη */
-                z-index: 100;          /* Πάνω από όλα */
+                position: fixed;       
+                z-index: 100;         
                 box-shadow: 0 4px 15px rgba(0,0,0,0.2);
                 border: 1px solid #4c64ff;
             }
@@ -1037,10 +1037,10 @@
             }
         });
 
-     // Projects από Database
+ e
      let projects = [];
 
-     // Φόρτωση projects από server
+  
      async function loadProjects() {
         try {
            const response = await fetch('project_handler.php?action=getProjects');
@@ -1053,28 +1053,28 @@
         }
      }
 
-        // Φόρτωση κατά το load της σελίδας
+    
         window.addEventListener('DOMContentLoaded', loadProjects);
 
-        // Team members από Database
+    
         let availableUsers = [];
 
-        // Φόρτωση team members από server
+    
         async function loadTeamMembers() {
             try {
                 const response = await fetch('team_handler.php?action=getMembers');
                 const data = await response.json();
                 
-                console.log('Raw data from API:', data); // ← DEBUG: Τι επιστρέφει το API
+                console.log('Raw data from API:', data); 
                 
-                // Φόρτωση ΟΛΩΝ των members (με status)
+             
                 availableUsers = data.map(member => ({
                     id: member.id,
                     name: member.name,
-                    status: member.status || 'active'  // ← Προσθήκη status (default: active)
+                    status: member.status || 'active'  
                 }));
                 
-                console.log('Mapped availableUsers:', availableUsers); // ← DEBUG: Τι έχει το array
+                console.log('Mapped availableUsers:', availableUsers); 
             } catch (error) {
                 console.error('Error loading team members:', error);
             }
@@ -1179,7 +1179,7 @@
                     const result = await response.json();
                     
                     if (result.success) {
-                        await loadProjects(); // Φορτώνει ξανά από DB
+                        await loadProjects(); 
                     } else {
                         alert('Failed to delete project!');
                     }
@@ -1344,7 +1344,7 @@
                 extendedInfo.classList.remove('hidden');
                 toggleBtnText.textContent = 'Hide Details';
                 
-                // Φόρτωση team members πριν δείξουμε το user list
+               
                 await loadTeamMembers();
                 
                 loadUsers();
@@ -1366,16 +1366,16 @@
                 const userItem = document.createElement('div');
                 userItem.className = 'user-item';
                 
-                // Έλεγχος: Είναι ήδη επιλεγμένος;
+               
                 const isSelected = selectedUserIds.includes(user.id);
                 
-                // Έλεγχος: Είναι inactive ΚΑΙ ήδη assigned;
+             
                 const isInactiveAssigned = user.status === 'inactive' && isSelected;
                 
-                // Έλεγχος: Είναι inactive ΚΑΙ ΔΕΝ είναι assigned;
+             
                 const isInactiveNotAssigned = user.status === 'inactive' && !isSelected;
                 
-                // Αν είναι inactive και ΔΕΝ είναι assigned → ΔΕΝ τον δείχνουμε
+            
                 if (isInactiveNotAssigned) {
                     return; // Skip this user
                 }
@@ -1546,31 +1546,29 @@
                 currentId = project.id;
                 modalTitle.innerText = 'Edit Project';
                 
-                // Φόρτωση basic info
+             
                 nameInput.value = project.name;
                 statusInput.value = project.status;
                 descInput.value = project.desc;
                 
-                // Φόρτωση team members πρώτα (αν δεν έχουν φορτωθεί)
+              
                 if (availableUsers.length === 0) {
                     await loadTeamMembers();
                 }
                 
-                // Φόρτωση users που είναι assigned
-                // Το project.users περιέχει usernames (από DB)
-                // Πρέπει να βρούμε τα IDs από το availableUsers
+            
                 if (project.users && project.users.length > 0) {
                     selectedUserIds = availableUsers
                         .filter(u => project.users.includes(u.name))
                         .map(u => u.id);
                 }
                 
-                // Φόρτωση comments
+         
                 if (project.comments && project.comments.length > 0) {
                     projectComments = JSON.parse(JSON.stringify(project.comments));
                 }
                 
-                // Φόρτωση files
+           
                 if (project.files && project.files.length > 0) {
                     projectFiles = JSON.parse(JSON.stringify(project.files));
                 }
@@ -1584,7 +1582,7 @@
                 descInput.value = '';
             }
             
-            // Ενημέρωση του modal view
+         
             loadModalFiles();
             loadModalComments();
         }
@@ -1636,7 +1634,7 @@
                 const result = await response.json();
                 
                 if (result.success) {
-                    await loadProjects(); // Φορτώνει ξανά από DB
+                    await loadProjects(); 
                     closeModal();
                 } else {
                     alert('Failed to save project!');

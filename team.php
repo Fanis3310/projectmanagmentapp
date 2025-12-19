@@ -378,12 +378,12 @@
             opacity: 0.5;
         }
 
-        /* ========================================
-       MOBILE HEADER (Ίδιο με Calendar)
+       /* ========================================
+       MOBILE HEADER
        ======================================== */
         @media (max-width: 768px) {
             
-            /* 1. Στοίχιση Header σε μία γραμμή */
+          
             header .max-w-7xl {
                 display: flex !important;
                 flex-direction: row !important;
@@ -394,7 +394,7 @@
                 padding-right: 0;
             }
 
-            /* 2. Τίτλος: Μικραίνει για να χωράει */
+     
             header h1.text-2xl {
                 font-size: 18px !important;
                 white-space: nowrap;
@@ -403,12 +403,12 @@
                 margin-right: auto;
             }
 
-            /* 3. Απόκρυψη του "Bell" (Καμπανάκι) για χώρο */
+          
             header .flex.items-center.space-x-4 > button:first-child {
                 display: none !important;
             }
 
-            /* 4. Κουμπί "Add Member": Προσαρμογή μεγέθους */
+          
             #new-member-button {
                 display: flex !important;
                 align-items: center;
@@ -579,26 +579,23 @@
     </div>
 
     <script>
-        // --- 1. SIDEBAR MOBILE TOGGLE (Διορθωμένο) ---
+    
         document.addEventListener('DOMContentLoaded', function() {
             const menuButton = document.getElementById('menu-button');
             const sidebar = document.getElementById('sidebar');
 
-            // Έλεγχος αν υπάρχουν τα στοιχεία
+         
             if (menuButton && sidebar) {
-                // Άνοιγμα/Κλείσιμο με το κουμπί
+               
                 menuButton.addEventListener('click', (e) => {
-                    // Σταματάμε το κλικ από το να πάει στο document (για να μην κλείσει αμέσως)
+             
                     e.stopPropagation();
-                    // Αφαιρεί/Προσθέτει την κλάση που κρύβει το sidebar
+                 
                     sidebar.classList.toggle('-translate-x-full');
                 });
 
-                // Κλείσιμο όταν πατάμε ΟΠΟΥΔΗΠΟΤΕ αλλού
+              
                 document.addEventListener('click', (e) => {
-                    // Αν το sidebar είναι ανοιχτό (δεν έχει την κλάση hidden)...
-                    // ...και το κλικ ΔΕΝ έγινε μέσα στο sidebar...
-                    // ...και είμαστε σε κινητό (πλάτος < 1024)
                     if (!sidebar.classList.contains('-translate-x-full') && 
                         !sidebar.contains(e.target) && 
                         window.innerWidth < 1024) {
@@ -609,11 +606,11 @@
                 console.error("Sidebar or Menu Button not found!");
             }
 
-            // Φόρτωση μελών
+        
             loadMembers();
         });
 
-        // --- 2. ΥΠΟΛΟΙΠΕΣ ΛΕΙΤΟΥΡΓΙΕΣ (Team Logic) ---
+    
         let members = [];
         let currentId = null;
         let currentDropdown = null;
@@ -690,7 +687,7 @@
             event.stopPropagation();
             const dropdown = event.currentTarget.nextElementSibling;
             
-            // Κλείσε το προηγούμενο αν υπάρχει
+  
             if (currentDropdown && currentDropdown !== dropdown) {
                 currentDropdown.classList.remove('active');
             }

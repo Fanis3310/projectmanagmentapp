@@ -3,7 +3,7 @@ require_once 'config.php';
 
 header('Content-Type: application/json');
 
-// Παίρνουμε το action από το request
+
 $action = $_GET['action'] ?? $_POST['action'] ?? '';
 
 // 📊 GET ALL PROJECTS
@@ -15,7 +15,7 @@ if ($action === 'getProjects') {
     while ($row = $result->fetch_assoc()) {
         $projectId = $row['id'];
         
-        // Παίρνουμε τους users του project
+      
         $usersSql = "SELECT username FROM project_users WHERE project_id = $projectId";
         $usersResult = $conn->query($usersSql);
         $users = [];
@@ -23,7 +23,7 @@ if ($action === 'getProjects') {
             $users[] = $userRow['username'];
         }
         
-        // Παίρνουμε τα comments
+     
         $commentsSql = "SELECT author, comment_text as text, comment_date as date 
                         FROM project_comments WHERE project_id = $projectId 
                         ORDER BY created_at DESC";
@@ -33,7 +33,7 @@ if ($action === 'getProjects') {
             $comments[] = $commentRow;
         }
         
-        // Παίρνουμε τα files
+      
         $filesSql = "SELECT filename as name, filesize as size 
                      FROM project_files WHERE project_id = $projectId 
                      ORDER BY created_at DESC";
@@ -60,7 +60,7 @@ if ($action === 'getProjects') {
     exit;
 }
 
-// 💾 SAVE PROJECT (New or Update)
+
 if ($action === 'saveProject') {
     $data = json_decode(file_get_contents('php://input'), true);
     
@@ -86,7 +86,7 @@ if ($action === 'saveProject') {
         $conn->query($sql);
         $projectId = $id;
         
-        // Διαγράφουμε τα παλιά users, comments, files
+       
         $conn->query("DELETE FROM project_users WHERE project_id = $projectId");
         $conn->query("DELETE FROM project_comments WHERE project_id = $projectId");
         $conn->query("DELETE FROM project_files WHERE project_id = $projectId");
@@ -98,14 +98,14 @@ if ($action === 'saveProject') {
         $projectId = $conn->insert_id;
     }
     
-    // Προσθέτουμε users
+
     foreach ($users as $username) {
         $username = $conn->real_escape_string($username);
         $conn->query("INSERT INTO project_users (project_id, username) 
                      VALUES ($projectId, '$username')");
     }
     
-    // Προσθέτουμε comments
+   
     foreach ($comments as $comment) {
         $author = $conn->real_escape_string($comment['author']);
         $text = $conn->real_escape_string($comment['text']);
@@ -114,7 +114,7 @@ if ($action === 'saveProject') {
                      VALUES ($projectId, '$author', '$text', '$commentDate')");
     }
     
-    // Προσθέτουμε files
+   
     foreach ($files as $file) {
         $filename = $conn->real_escape_string($file['name']);
         $filesize = $conn->real_escape_string($file['size']);
@@ -126,12 +126,12 @@ if ($action === 'saveProject') {
     exit;
 }
 
-// 🗑️ DELETE PROJECT
+
 if ($action === 'deleteProject') {
     $data = json_decode(file_get_contents('php://input'), true);
     $id = (int)$data['id'];
     
-    // Το CASCADE θα διαγράψει αυτόματα users, comments, files
+    
     $sql = "DELETE FROM projects WHERE id = $id";
     $conn->query($sql);
     
