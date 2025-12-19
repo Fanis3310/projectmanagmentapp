@@ -1006,6 +1006,8 @@
             margin-bottom: 8px;
             flex-shrink: 0; 
 
+        }
+
         
         .event-dot {
             font-size: 10px;
