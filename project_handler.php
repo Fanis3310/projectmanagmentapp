@@ -43,13 +43,17 @@ if ($action === 'getProjects') {
             $files[] = $fileRow;
         }
         
+        
+        $phpDate = strtotime($row['created_at']);
+        $formattedDate = date("d M, Y", $phpDate);
+
         $projects[] = [
             'id' => (int)$row['id'],
             'name' => $row['name'],
             'desc' => $row['description'],
             'status' => $row['status'],
             'members' => (int)$row['members'],
-            'date' => $row['date'],
+            'date' => $formattedDate,
             'users' => $users,
             'comments' => $comments,
             'files' => $files
@@ -68,7 +72,7 @@ if ($action === 'saveProject') {
     $desc = $conn->real_escape_string($data['desc']);
     $status = $conn->real_escape_string($data['status']);
     $members = (int)$data['members'];
-    $date = $conn->real_escape_string($data['date']);
+    $date = isset($data['date']) ? $conn->real_escape_string($data['date']) : '';
     $users = $data['users'] ?? [];
     $comments = $data['comments'] ?? [];
     $files = $data['files'] ?? [];
@@ -86,26 +90,47 @@ if ($action === 'saveProject') {
         $conn->query($sql);
         $projectId = $id;
         
-       
+        // Καθαρισμός παλιών δεδομένων για να μπουν τα νέα
         $conn->query("DELETE FROM project_users WHERE project_id = $projectId");
         $conn->query("DELETE FROM project_comments WHERE project_id = $projectId");
         $conn->query("DELETE FROM project_files WHERE project_id = $projectId");
+
     } else {
         // INSERT new project
         $sql = "INSERT INTO projects (name, description, status, members, date) 
                 VALUES ('$name', '$desc', '$status', $members, '$date')";
-        $conn->query($sql);
-        $projectId = $conn->insert_id;
+        
+        if ($conn->query($sql)) {
+            $projectId = $conn->insert_id;
+
+            // --- NEW NOTIFICATION CODE (ΕΔΩ ΕΓΙΝΕ Η ΑΛΛΑΓΗ) ---
+            $notifTitle = "New Project Created";
+            $notifMsg = "Project '$name' has been added.";
+            $notifLink = "project.php"; 
+            
+            // Χρησιμοποιούμε prepare για ασφάλεια στα notifications
+            $stmtNotif = $conn->prepare("INSERT INTO notifications (title, message, link, type) VALUES (?, ?, ?, 'project')");
+            if ($stmtNotif) {
+                $stmtNotif->bind_param("sss", $notifTitle, $notifMsg, $notifLink);
+                $stmtNotif->execute();
+                $stmtNotif->close();
+            }
+            // ---------------------------------------------------
+        } else {
+            // Αν αποτύχει το insert, επιστρέφουμε error
+            echo json_encode(['error' => 'Failed to create project']);
+            exit;
+        }
     }
     
-
+    // Εισαγωγή χρηστών
     foreach ($users as $username) {
         $username = $conn->real_escape_string($username);
         $conn->query("INSERT INTO project_users (project_id, username) 
                      VALUES ($projectId, '$username')");
     }
     
-   
+    // Εισαγωγή σχολίων
     foreach ($comments as $comment) {
         $author = $conn->real_escape_string($comment['author']);
         $text = $conn->real_escape_string($comment['text']);
@@ -114,7 +139,7 @@ if ($action === 'saveProject') {
                      VALUES ($projectId, '$author', '$text', '$commentDate')");
     }
     
-   
+    // Εισαγωγή αρχείων
     foreach ($files as $file) {
         $filename = $conn->real_escape_string($file['name']);
         $filesize = $conn->real_escape_string($file['size']);

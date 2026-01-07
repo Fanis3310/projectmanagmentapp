@@ -79,7 +79,7 @@ if ($action === 'saveEvent') {
                 WHERE id = $id";
         $conn->query($sql);
         echo json_encode(['success' => true, 'id' => $id]);
-    } else {
+   } else {
         // INSERT
         $sql = "INSERT INTO calendar_events 
                 (title, description, event_type, start_date, end_date, start_time, end_time, all_day, priority, status, assigned_to, project_id)
@@ -87,7 +87,23 @@ if ($action === 'saveEvent') {
                 ('$title', '$description', '$event_type', '$start_date', ".($end_date === 'NULL' ? 'NULL' : "'$end_date'").", $start_time, $end_time, $all_day, '$priority', '$status', $assigned_to, $project_id)";
         
         if ($conn->query($sql)) {
-            echo json_encode(['success' => true, 'id' => $conn->insert_id]);
+            $newId = $conn->insert_id;
+
+            // --- NEW NOTIFICATION CODE (ΕΔΩ ΕΓΙΝΕ Η ΑΛΛΑΓΗ) ---
+            $notifTitle = "New Event Added";
+            $notifMsg = "Event '$title' is scheduled for $start_date.";
+            $notifLink = "calendar.php";
+            
+            // Χρησιμοποιούμε prepare για ασφάλεια
+            $stmtNotif = $conn->prepare("INSERT INTO notifications (title, message, link, type) VALUES (?, ?, ?, 'event')");
+            if ($stmtNotif) {
+                $stmtNotif->bind_param("sss", $notifTitle, $notifMsg, $notifLink);
+                $stmtNotif->execute();
+                $stmtNotif->close();
+            }
+            // ---------------------------------------------------
+
+            echo json_encode(['success' => true, 'id' => $newId]);
         } else {
             echo json_encode(['success' => false, 'error' => $conn->error]);
         }

@@ -1619,7 +1619,6 @@
                 status: newStatus,
                 desc: newDesc,
                 members: selectedUsers.length + 1,
-                date: currentId ? projects.find(p => p.id === currentId)?.date : 'Just now',
                 users: selectedUsers,
                 comments: JSON.parse(JSON.stringify(projectComments)),
                 files: JSON.parse(JSON.stringify(projectFiles))
