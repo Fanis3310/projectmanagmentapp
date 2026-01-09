@@ -927,7 +927,7 @@
             statusChartInstance = new Chart(ctx, {
                 type: 'doughnut',
                 data: {
-                    labels: ['Active', 'Planning', 'Completed'],
+                    labels: ['In Progress', 'Planning', 'Completed'],
                     datasets: [{
                         data: [active, planning, completed],
                         backgroundColor: ['#10b981', '#f59e0b', '#3b82f6'],
@@ -972,7 +972,7 @@
             legendContainer.innerHTML = '';
             
             const statuses = [
-                { label: 'Active', count: active, color: 'bg-emerald-500', text: 'text-emerald-700', bg: 'bg-emerald-50' },
+                { label: 'In Progress', count: active, color: 'bg-emerald-500', text: 'text-emerald-700', bg: 'bg-emerald-50' },
                 { label: 'Planning', count: planning, color: 'bg-amber-500', text: 'text-amber-700', bg: 'bg-amber-50' },
                 { label: 'Completed', count: completed, color: 'bg-blue-500', text: 'text-blue-700', bg: 'bg-blue-50' }
             ];
@@ -994,25 +994,71 @@
             });
         }
 
-        // --- 2. RENDER ACTIVITY (Έντονα Σχόλια & Γραμμή) ---
+
+
+        
+        function parseCommentDate(str) {
+            if (!str) return new Date(0);
+
+            const [datePart, timePart] = str.split(',').map(s => s.trim());
+            const [day, month, year] = datePart.split('/').map(n => parseInt(n, 10));
+            const [hours, minutes, seconds] = timePart.split(':').map(n => parseInt(n, 10));
+
+            return new Date(year, month - 1, day, hours, minutes, seconds);
+        }
+
+        
+        function parseFileDate(str) {
+            if (!str) return new Date(0);
+
+            const iso = str.replace(' ', 'T');
+            const d = new Date(iso);
+            if (isNaN(d.getTime())) return new Date(0);
+
+            return d;
+        }
+
+
+        
         function renderActivityFeed(projects) {
             const container = document.getElementById('recentActivityList');
-            let allComments = [];
+            let allActivity = [];
 
             projects.forEach(p => {
+                // --- 1. COMMENTS ---
                 if (p.comments && p.comments.length > 0) {
                     p.comments.forEach(c => {
-                        allComments.push({
+                        let dateObj = parseCommentDate(c.date);
+
+                        allActivity.push({
+                            type: 'comment',
                             project: p.name,
                             author: c.author,
-                            text: c.text,
-                            date: c.date
+                            content: c.text,
+                            displayStr: c.date,
+                            sortDate: dateObj
+                        });
+                    });
+                }
+
+                // --- 2. FILES ---
+                if (p.files && p.files.length > 0) {
+                    p.files.forEach(f => {
+                        let dateObj = parseFileDate(f.created_at);
+
+                        allActivity.push({
+                            type: 'file',
+                            project: p.name,
+                            author: 'File Upload',
+                            content: `${f.name} <span class="text-xs text-gray-400">(${f.size})</span>`,
+                            displayStr: f.created_at,
+                            sortDate: dateObj
                         });
                     });
                 }
             });
 
-            if (allComments.length === 0) {
+            if (allActivity.length === 0) {
                 container.innerHTML = `
                     <div class="flex flex-col items-center justify-center h-full text-gray-400">
                         <i class="fa-regular fa-comment-dots text-3xl mb-2"></i>
@@ -1021,41 +1067,48 @@
                 return;
             }
 
-            // Παίρνουμε τα τελευταία 10
-            const recentComments = allComments.slice(0, 10); 
+            allActivity.sort((a, b) => b.sortDate - a.sortDate);
+
+            const recentActivity = allActivity.slice(0, 20);
 
             container.innerHTML = '';
-            recentComments.forEach(c => {
-                const initials = c.author.slice(0, 2).toUpperCase();
-                
-                const item = document.createElement('div');
-                // ΕΔΩ ΕΙΝΑΙ Η ΓΡΑΜΜΗ (border-b):
-                item.className = 'flex gap-4 mb-5 pb-5 border-b border-gray-100 last:border-0 last:mb-0 last:pb-0 hover:bg-gray-50 p-2 rounded-lg transition-colors';
-                
-                item.innerHTML = `
-                    <div class="w-10 h-10 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 text-white flex items-center justify-center font-bold text-xs flex-shrink-0 shadow-md">
-                        ${initials}
+            recentActivity.forEach(item => {
+                const isComment = item.type === 'comment';
+                const iconClass = isComment ? 'fa-comment-dots' : 'fa-file-arrow-up';
+                const bgClass = isComment 
+                    ? 'bg-gradient-to-br from-indigo-500 to-purple-600'
+                    : 'bg-gradient-to-br from-emerald-500 to-teal-600';
+                const avatarContent = isComment 
+                    ? item.author.slice(0, 2).toUpperCase() 
+                    : `<i class="fa-solid ${iconClass}"></i>`;
+
+                const div = document.createElement('div');
+                div.className = 'flex gap-4 mb-5 pb-5 border-b border-gray-100 last:border-0 last:mb-0 last:pb-0 hover:bg-gray-50 p-2 rounded-lg transition-colors';
+                div.innerHTML = `
+                    <div class="w-10 h-10 rounded-full ${bgClass} text-white flex items-center justify-center font-bold text-xs flex-shrink-0 shadow-md">
+                        ${avatarContent}
                     </div>
                     <div class="flex-1">
                         <div class="flex justify-between items-start mb-1">
                             <div class="flex flex-col">
-                                <span class="text-sm font-bold text-gray-900">${c.author}</span>
+                                <span class="text-sm font-bold text-gray-900">${item.author}</span>
                                 <span class="text-xs text-primary-blue font-semibold bg-blue-50 px-2 py-0.5 rounded w-fit mt-1">
-                                ${c.project}
+                                ${item.project}
                                 </span>
                             </div>
                             <span class="text-xs font-medium text-gray-400 whitespace-nowrap bg-gray-50 px-2 py-1 rounded border border-gray-100">
-                                ${c.date}
+                                ${item.displayStr}
                             </span>
                         </div>
-                        <p class="text-sm text-gray-700 font-medium leading-relaxed mt-2 pl-2 border-l-2 border-indigo-100">
-                            "${c.text}"
+                        <p class="text-sm text-gray-700 font-medium leading-relaxed mt-2 pl-2 border-l-2 ${isComment ? 'border-indigo-100' : 'border-emerald-100'}">
+                            ${isComment ? '"' + item.content + '"' : 'Uploaded: ' + item.content}
                         </p>
                     </div>
                 `;
-                container.appendChild(item);
+                container.appendChild(div);
             });
         }
+
 </script>
     <div class="toast-container" id="toastContainer"></div>
 </body>

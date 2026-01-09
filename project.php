@@ -1463,7 +1463,8 @@
             const comment = {
                 author: "Current User",
                 date: new Date().toLocaleString(),
-                text: text
+                text: text,
+                is_new: true  
             };
 
             projectComments.push(comment);
@@ -1484,7 +1485,9 @@
                         name: file.name,
                         size: formatFileSize(file.size),
                         type: file.type,
-                        data: e.target.result
+                        data: e.target.result,
+                        created_at: null, // Δεν έχει δημιουργηθεί ακόμα στη βάση
+                        is_new: true      // <--- ΠΟΛΥ ΣΗΜΑΝΤΙΚΟ: Αυτό ενεργοποιεί το Notification
                     });
                     loadFiles();
                     loadModalFiles();
@@ -1603,46 +1606,67 @@
         });
 
         async function saveProject() {
-            const newName = nameInput.value.trim();
-            const newStatus = statusInput.value;
-            const newDesc = descInput.value.trim();
-
-            if (!newName) return alert("Project name is required");
-
-            const selectedUsers = selectedUserIds.map(id => 
-                availableUsers.find(u => u.id === id)?.name
-            );
+            // ✅ ΣΩΣΤΑ IDs
+            const name = document.getElementById('inputName').value.trim();
+            const desc = document.getElementById('inputDesc').value.trim();
+            const status = document.getElementById('inputStatus').value;
+            const members = selectedUserIds.length || 0;
+            
+            if (!name) {
+                alert('Project Name is required!');
+                return;
+            }
 
             const projectData = {
                 id: currentId,
-                name: newName,
-                status: newStatus,
-                desc: newDesc,
-                members: selectedUsers.length + 1,
-                users: selectedUsers,
-                comments: JSON.parse(JSON.stringify(projectComments)),
-                files: JSON.parse(JSON.stringify(projectFiles))
+                name: name,
+                desc: desc,
+                status: status,
+                members: members,
+                date: new Date().toLocaleDateString('en-GB'), // 09/01/2026
+                users: selectedUserIds.map(id => availableUsers.find(u => u.id === id)?.name || ''),
+                // ✅ Files με is_new
+                files: projectFiles.map(f => ({
+                    name: f.name,
+                    size: f.size,
+                    created_at: f.created_at || null,
+                    is_new: f.is_new || false
+                })),
+                // Comments
+                comments: projectComments.map(c => ({
+                    author: c.author,
+                    text: c.text,
+                    date: c.date,
+                    created_at: c.created_at || null,
+                    is_new: c.is_new || false
+                }))
             };
 
             try {
                 const response = await fetch('project_handler.php?action=saveProject', {
                     method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(projectData)
                 });
                 const result = await response.json();
                 
                 if (result.success) {
-                    await loadProjects(); 
                     closeModal();
+                    // ✅ Refresh index.php
+                    if (typeof loadDashboardData === 'function') {
+                        loadDashboardData();
+                    } else {
+                        window.location.reload();
+                    }
                 } else {
-                    alert('Failed to save project!');
+                    alert('Error saving project: ' + (result.error || 'Unknown error'));
                 }
             } catch (error) {
-                console.error('Error saving project:', error);
-                alert('Failed to save project!');
+                console.error('Error:', error);
+                alert('An error occurred while saving.');
             }
         }
+
 
 
         
