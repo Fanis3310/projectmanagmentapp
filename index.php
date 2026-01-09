@@ -25,6 +25,8 @@
             }
         }
     </script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
     <style>
         :root {
             --primary-color: #4c64ff;
@@ -51,6 +53,30 @@
             height: 100vh;
             overflow: hidden;
     
+        }
+
+
+                /* --- NOTIFICATIONS SCROLL FIX --- */
+        #notifList {
+            /* Υπολογίζουμε περίπου 70px ανά ειδοποίηση x 5 = 350px */
+            max-height: 350px; 
+            overflow-y: auto; /* Εμφανίζει scrollbar αν ξεπεράσει το ύψος */
+        }
+
+        /* Στυλ για την μπάρα κύλισης (για να ταιριάζει με τα υπόλοιπα) */
+        #notifList::-webkit-scrollbar {
+            width: 5px;
+        }
+        #notifList::-webkit-scrollbar-track {
+            background: #f3f4f6;
+            border-radius: 0 0 12px 0; /* Στρογγυλοποίηση κάτω δεξιά */
+        }
+        #notifList::-webkit-scrollbar-thumb {
+            background-color: #d1d5db;
+            border-radius: 20px;
+        }
+        #notifList::-webkit-scrollbar-thumb:hover {
+            background-color: #8d8f91ff;
         }
 
         /* --- DASHBOARD SPECIFIC STYLES --- */
@@ -219,7 +245,7 @@
         width: 300px;
         background: white;
         border-radius: 12px;
-        box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        box-shadow: 0 10px 25px rgba(0,0,0,0.6);
         border: 1px solid #f3f4f6;
         z-index: 100;
         margin-top: 10px;
@@ -527,6 +553,42 @@
                 </div>
             </div>
 
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-6">
+    
+        <div class="section-card lg:col-span-1 flex flex-col">
+            <div class="section-header">
+                <div class="section-title">Project Overview</div>
+            </div>
+            
+            <div class="relative flex-1 flex flex-col items-center justify-center min-h-[250px]">
+                <div class="relative w-48 h-48">
+                    <canvas id="statusChart"></canvas>
+                    <div class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+                        <span class="text-3xl font-bold text-gray-800" id="chartTotal">0</span>
+                        <span class="text-xs text-gray-400 uppercase font-semibold">Projects</span>
+                    </div>
+                </div>
+            </div>
+
+            <div id="chartLegend" class="mt-4 space-y-3 px-4">
+                </div>
+        </div>
+
+        <div class="section-card lg:col-span-2">
+            <div class="section-header">
+                <div class="section-title">Latest Project Activity</div>
+            </div>
+            <div class="overflow-y-auto h-[500px] pr-2 pb-4 custom-scrollbar" id="recentActivityList">
+                <div class="text-center text-gray-400 py-10">Loading activity...</div>
+            </div>
+        </div>
+
+    </div>
+
+  
+
+    
+
         </div>
     </div>
 
@@ -657,6 +719,20 @@
 
         // --- 4. DASHBOARD DATA LOADING (PROJECTS, EVENTS, TEAM) ---
         async function loadDashboardData() {
+                 // Projects
+            try {
+                const pResponse = await fetch('project_handler.php?action=getProjects');
+                const projects = await pResponse.json();
+                
+                document.getElementById('totalProjects').innerText = projects.length;
+                renderRecentProjects(projects);
+                
+                // --- ΝΕΕΣ ΠΡΟΣΘΗΚΕΣ ---
+                renderProjectChart(projects); // Φτιάξε το γράφημα
+                renderActivityFeed(projects); // Φτιάξε τη λίστα δραστηριότητας
+                // ----------------------
+
+            } catch (e) { console.error("Error loading projects", e); }
             // Projects
             try {
                 const pResponse = await fetch('project_handler.php?action=getProjects');
@@ -822,6 +898,164 @@
             // ΞΕΚΙΝΑΜΕ ΤΗΝ ΕΦΑΡΜΟΓΗ
             startPolling(); 
         });
+
+
+
+                // --- 1. RENDER CHART FUNCTION ---
+        let statusChartInstance = null;
+
+
+
+        function renderProjectChart(projects) {
+            const ctx = document.getElementById('statusChart').getContext('2d');
+            
+            // Υπολογισμοί
+            const total = projects.length;
+            const active = projects.filter(p => p.status === 'active').length;
+            const planning = projects.filter(p => p.status === 'planning').length;
+            const completed = projects.filter(p => p.status === 'completed').length;
+            
+            // Ενημέρωση κεντρικού αριθμού
+            document.getElementById('chartTotal').innerText = total;
+
+            // Destroy αν υπάρχει ήδη
+            if (statusChartInstance) {
+                statusChartInstance.destroy();
+            }
+
+            // Δημιουργία Chart
+            statusChartInstance = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Active', 'Planning', 'Completed'],
+                    datasets: [{
+                        data: [active, planning, completed],
+                        backgroundColor: ['#10b981', '#f59e0b', '#3b82f6'],
+                        borderWidth: 0,
+                        hoverOffset: 10 // Πιο έντονο hover effect
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: '85%', // Πιο λεπτό δαχτυλίδι (πιο μοντέρνο)
+                    animation: {
+                        animateScale: true,
+                        animateRotate: true,
+                        duration: 2000, // Πιο αργό/smooth animation
+                        easing: 'easeOutQuart'
+                    },
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                            titleColor: '#1f2937',
+                            bodyColor: '#1f2937',
+                            borderColor: '#e5e7eb',
+                            borderWidth: 1,
+                            padding: 10,
+                            displayColors: true,
+                            callbacks: {
+                                label: function(context) {
+                                    let value = context.raw;
+                                    let percentage = total > 0 ? Math.round((value / total) * 100) + '%' : '0%';
+                                    return ` ${context.label}: ${value} (${percentage})`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Δημιουργία Custom Legend με Μπάρες Ποσοστών
+            const legendContainer = document.getElementById('chartLegend');
+            legendContainer.innerHTML = '';
+            
+            const statuses = [
+                { label: 'Active', count: active, color: 'bg-emerald-500', text: 'text-emerald-700', bg: 'bg-emerald-50' },
+                { label: 'Planning', count: planning, color: 'bg-amber-500', text: 'text-amber-700', bg: 'bg-amber-50' },
+                { label: 'Completed', count: completed, color: 'bg-blue-500', text: 'text-blue-700', bg: 'bg-blue-50' }
+            ];
+
+            statuses.forEach(s => {
+                const pct = total > 0 ? Math.round((s.count / total) * 100) : 0;
+                const html = `
+                    <div class="flex items-center justify-between text-sm mb-1">
+                        <span class="font-bold text-gray-700 flex items-center gap-2">
+                            <span class="w-2 h-2 rounded-full ${s.color}"></span> ${s.label}
+                        </span>
+                        <span class="font-bold ${s.text}">${pct}% <span class="text-gray-400 font-normal text-xs">(${s.count})</span></span>
+                    </div>
+                    <div class="w-full bg-gray-100 rounded-full h-1.5 mb-3">
+                        <div class="${s.color} h-1.5 rounded-full" style="width: ${pct}%"></div>
+                    </div>
+                `;
+                legendContainer.innerHTML += html;
+            });
+        }
+
+        // --- 2. RENDER ACTIVITY (Έντονα Σχόλια & Γραμμή) ---
+        function renderActivityFeed(projects) {
+            const container = document.getElementById('recentActivityList');
+            let allComments = [];
+
+            projects.forEach(p => {
+                if (p.comments && p.comments.length > 0) {
+                    p.comments.forEach(c => {
+                        allComments.push({
+                            project: p.name,
+                            author: c.author,
+                            text: c.text,
+                            date: c.date
+                        });
+                    });
+                }
+            });
+
+            if (allComments.length === 0) {
+                container.innerHTML = `
+                    <div class="flex flex-col items-center justify-center h-full text-gray-400">
+                        <i class="fa-regular fa-comment-dots text-3xl mb-2"></i>
+                        <p>No recent activity</p>
+                    </div>`;
+                return;
+            }
+
+            // Παίρνουμε τα τελευταία 10
+            const recentComments = allComments.slice(0, 10); 
+
+            container.innerHTML = '';
+            recentComments.forEach(c => {
+                const initials = c.author.slice(0, 2).toUpperCase();
+                
+                const item = document.createElement('div');
+                // ΕΔΩ ΕΙΝΑΙ Η ΓΡΑΜΜΗ (border-b):
+                item.className = 'flex gap-4 mb-5 pb-5 border-b border-gray-100 last:border-0 last:mb-0 last:pb-0 hover:bg-gray-50 p-2 rounded-lg transition-colors';
+                
+                item.innerHTML = `
+                    <div class="w-10 h-10 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 text-white flex items-center justify-center font-bold text-xs flex-shrink-0 shadow-md">
+                        ${initials}
+                    </div>
+                    <div class="flex-1">
+                        <div class="flex justify-between items-start mb-1">
+                            <div class="flex flex-col">
+                                <span class="text-sm font-bold text-gray-900">${c.author}</span>
+                                <span class="text-xs text-primary-blue font-semibold bg-blue-50 px-2 py-0.5 rounded w-fit mt-1">
+                                ${c.project}
+                                </span>
+                            </div>
+                            <span class="text-xs font-medium text-gray-400 whitespace-nowrap bg-gray-50 px-2 py-1 rounded border border-gray-100">
+                                ${c.date}
+                            </span>
+                        </div>
+                        <p class="text-sm text-gray-700 font-medium leading-relaxed mt-2 pl-2 border-l-2 border-indigo-100">
+                            "${c.text}"
+                        </p>
+                    </div>
+                `;
+                container.appendChild(item);
+            });
+        }
 </script>
     <div class="toast-container" id="toastContainer"></div>
 </body>
