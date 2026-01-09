@@ -5,7 +5,7 @@ header('Content-Type: application/json');
 
 $action = $_GET['action'] ?? $_POST['action'] ?? '';
 
-// 📊 GET ALL PROJECTS
+// 📊 1. GET ALL PROJECTS
 if ($action === 'getProjects') {
     $sql = "SELECT * FROM projects ORDER BY created_at DESC";
     $result = $conn->query($sql);
@@ -22,7 +22,7 @@ if ($action === 'getProjects') {
             $users[] = $userRow['username'];
         }
         
-        // Fetch Comments (created_at is vital)
+        // Fetch Comments
         $commentsSql = "SELECT author, comment_text as text, comment_date as date, created_at 
                         FROM project_comments WHERE project_id = $projectId 
                         ORDER BY created_at DESC";
@@ -32,8 +32,7 @@ if ($action === 'getProjects') {
             $comments[] = $commentRow;
         }
         
-        // Fetch Files (created_at is vital)
-        // ΠΡΟΣΟΧΗ: Εδώ παίρνουμε το created_at
+        // Fetch Files
         $filesSql = "SELECT filename as name, filesize as size, created_at 
                      FROM project_files WHERE project_id = $projectId 
                      ORDER BY created_at DESC";
@@ -63,9 +62,15 @@ if ($action === 'getProjects') {
     exit;
 }
 
-// 💾 SAVE PROJECT (Update or Insert)
+// 💾 2. SAVE PROJECT
 if ($action === 'saveProject') {
-    $data = json_decode(file_get_contents('php://input'), true);
+    $input = file_get_contents('php://input');
+    $data = json_decode($input, true);
+    
+    if (!$data) {
+        echo json_encode(['error' => 'Invalid JSON data']);
+        exit;
+    }
     
     $name = $conn->real_escape_string($data['name']);
     $desc = $conn->real_escape_string($data['desc']);
@@ -83,7 +88,7 @@ if ($action === 'saveProject') {
         $conn->query($sql);
         $projectId = $id;
         
-        // Clear old data to re-insert (Cleanest way for relations)
+        // Καθαρισμός παλιών για να μπουν τα updated
         $conn->query("DELETE FROM project_users WHERE project_id = $projectId");
         $conn->query("DELETE FROM project_comments WHERE project_id = $projectId");
         $conn->query("DELETE FROM project_files WHERE project_id = $projectId");
@@ -117,7 +122,6 @@ if ($action === 'saveProject') {
         $text = $conn->real_escape_string($comment['text']);
         $cDate = $conn->real_escape_string($comment['date']);
         
-        // Διατήρηση παλιάς ημερομηνίας αν υπάρχει, αλλιώς NOW()
         $createdVal = "NOW()";
         if (isset($comment['created_at']) && !empty($comment['created_at'])) {
             $safeDate = $conn->real_escape_string($comment['created_at']);
@@ -126,7 +130,6 @@ if ($action === 'saveProject') {
         
         $conn->query("INSERT INTO project_comments (project_id, author, comment_text, comment_date, created_at) VALUES ($projectId, '$author', '$text', '$cDate', $createdVal)");
 
-        // NOTIFICATION FOR NEW COMMENT
         if (isset($comment['is_new']) && $comment['is_new'] == true) {
             $stmt = $conn->prepare("INSERT INTO notifications (title, message, link, type) VALUES (?, ?, ?, 'comment')");
             $nTitle = "New Comment";
@@ -137,7 +140,7 @@ if ($action === 'saveProject') {
         }
     }
     
-    // Insert Files
+   
     foreach ($files as $file) {
         $fname = $conn->real_escape_string($file['name']);
         $fsize = $conn->real_escape_string($file['size']);
@@ -148,32 +151,42 @@ if ($action === 'saveProject') {
             $createdVal = "'$safeDate'";
         }
         
-        $conn->query("INSERT INTO project_files (project_id, filename, filesize, created_at) VALUES ($projectId, '$fname', '$fsize', $createdVal)");
         
-        // ✅ ΚΑΘΕ FILE = NOTIFICATION (χωρίς is_new)
+        $conn->query("INSERT INTO project_files (project_id, filename, filesize, created_at) VALUES ($projectId, '$fname', '$fsize', $createdVal)");
+    }
+
+    
+    if (!empty($files)) {
+        $fileCount = count($files);
+        $fileNames = array_map(function($f) { return $f['name']; }, $files);
+        $filesList = implode(', ', array_slice($fileNames, 0, 2));
+        $moreText = count($fileNames) > 2 ? ' + ' . (count($fileNames) - 2) . ' more' : '';
+        
         $stmt = $conn->prepare("INSERT INTO notifications (title, message, link, type) VALUES (?, ?, ?, 'file')");
-        $nTitle = "File Uploaded";
-        $nMsg = "New file '$fname' added to project '$name'.";
+        $nTitle = "Files Uploaded";
+        $nMsg = "Uploaded $fileCount file(s): $filesList$moreText to project '$name'.";
         $nLink = "project.php";
         $stmt->bind_param("sss", $nTitle, $nMsg, $nLink);
         $stmt->execute();
         $stmt->close();
     }
-
-
         
-        echo json_encode(['success' => true, 'id' => $projectId]);
-        exit;
-    }
+    echo json_encode(['success' => true, 'id' => $projectId]);
+    exit;
+}
 
-    // 🗑️ DELETE PROJECT
-    if ($action === 'deleteProject') {
-        $data = json_decode(file_get_contents('php://input'), true);
+// 🗑️ 3. DELETE PROJECT
+if ($action === 'deleteProject') {
+    $data = json_decode(file_get_contents('php://input'), true);
+    if (isset($data['id'])) {
         $id = (int)$data['id'];
         $conn->query("DELETE FROM projects WHERE id = $id");
         echo json_encode(['success' => true]);
-        exit;
+    } else {
+        echo json_encode(['error' => 'No ID provided']);
     }
+    exit;
+}
 
 echo json_encode(['error' => 'Invalid action']);
 ?>

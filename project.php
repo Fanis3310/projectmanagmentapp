@@ -1486,8 +1486,8 @@
                         size: formatFileSize(file.size),
                         type: file.type,
                         data: e.target.result,
-                        created_at: null, // Δεν έχει δημιουργηθεί ακόμα στη βάση
-                        is_new: true      // <--- ΠΟΛΥ ΣΗΜΑΝΤΙΚΟ: Αυτό ενεργοποιεί το Notification
+                        created_at: null, 
+                        is_new: true      
                     });
                     loadFiles();
                     loadModalFiles();
@@ -1605,67 +1605,71 @@
             if (e.target === modal) closeModal();
         });
 
-        async function saveProject() {
-            // ✅ ΣΩΣΤΑ IDs
-            const name = document.getElementById('inputName').value.trim();
-            const desc = document.getElementById('inputDesc').value.trim();
-            const status = document.getElementById('inputStatus').value;
-            const members = selectedUserIds.length || 0;
-            
-            if (!name) {
-                alert('Project Name is required!');
-                return;
-            }
+        // Μέσα στο index.php -> Αντικατάσταση της saveProject
+    async function saveProject() {
+        const name = document.getElementById('projectName').value;
+        const desc = document.getElementById('projectDesc').value;
+        const status = document.getElementById('projectStatus').value;
+        const members = document.getElementById('projectMembers').value;
+        const date = document.getElementById('projectDate').value;
 
-            const projectData = {
-                id: currentId,
-                name: name,
-                desc: desc,
-                status: status,
-                members: members,
-                date: new Date().toLocaleDateString('en-GB'), // 09/01/2026
-                users: selectedUserIds.map(id => availableUsers.find(u => u.id === id)?.name || ''),
-                // ✅ Files με is_new
-                files: projectFiles.map(f => ({
-                    name: f.name,
-                    size: f.size,
-                    created_at: f.created_at || null,
-                    is_new: f.is_new || false
-                })),
-                // Comments
-                comments: projectComments.map(c => ({
-                    author: c.author,
-                    text: c.text,
-                    date: c.date,
-                    created_at: c.created_at || null,
-                    is_new: c.is_new || false
-                }))
-            };
-
-            try {
-                const response = await fetch('project_handler.php?action=saveProject', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(projectData)
-                });
-                const result = await response.json();
-                
-                if (result.success) {
-                    closeModal();
-                    // ✅ Refresh index.php
-                    if (typeof loadDashboardData === 'function') {
-                        loadDashboardData();
-                    } else {
-                        window.location.reload();
-                    }
-                } else {
-                    alert('Error saving project: ' + (result.error || 'Unknown error'));
-                }
-            } catch (error) {
-                console.error('Error:', error);
-                alert('An error occurred while saving.');
-            }
+        if (!name) {
+            alert('Project Name is required');
+            return;
         }
+
+        const projectData = {
+            id: currentProjectId,
+            name: name,
+            desc: desc,
+            status: status,
+            members: members,
+            date: date,
+            users: selectedUsers,
+            
+            // COMMENTS: Προσθέτουμε το is_new
+            comments: projectComments.map(c => ({
+                author: c.author,
+                text: c.text,
+                date: c.date,
+                created_at: c.created_at || null,
+                is_new: c.is_new || false 
+            })),
+            
+            // FILES: Προσθέτουμε το is_new (ΑΥΤΟ ΕΛΕΙΠΕ!)
+            files: projectFiles.map(f => ({
+                name: f.name,
+                size: f.size,
+                created_at: f.created_at || null,
+                is_new: f.is_new || false // <--- Χωρίς αυτό, το PHP νομίζει ότι όλα είναι παλιά
+            }))
+        };
+
+        try {
+            const response = await fetch('project_handler.php?action=saveProject', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(projectData)
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                closeModal();
+                // Ανανέωση Dashboard
+                await loadDashboardData(); 
+                
+                // Καθαρισμός flags
+                projectFiles.forEach(f => f.is_new = false);
+                projectComments.forEach(c => c.is_new = false);
+            } else {
+                alert('Error saving project: ' + (result.error || 'Unknown error'));
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('An error occurred while saving.');
+        }
+    }
 
 
 
