@@ -1607,41 +1607,37 @@
 
         // Μέσα στο index.php -> Αντικατάσταση της saveProject
     async function saveProject() {
-        const name = document.getElementById('projectName').value;
-        const desc = document.getElementById('projectDesc').value;
-        const status = document.getElementById('projectStatus').value;
-        const members = document.getElementById('projectMembers').value;
-        const date = document.getElementById('projectDate').value;
+        const name = nameInput.value;
+        const desc = descInput.value;
+        const status = statusInput.value;
+        const members = selectedUserIds.length;
+        const date = '';
 
         if (!name) {
             alert('Project Name is required');
             return;
         }
 
+        const users = Array.from(document.querySelectorAll('#userList input:checked')).map(cb => cb.value);
+
         const projectData = {
-            id: currentProjectId,
+            id: currentId,
             name: name,
             desc: desc,
             status: status,
             members: members,
             date: date,
-            users: selectedUsers,
-            
-            // COMMENTS: Προσθέτουμε το is_new
+            users: users,
             comments: projectComments.map(c => ({
                 author: c.author,
                 text: c.text,
                 date: c.date,
-                created_at: c.created_at || null,
-                is_new: c.is_new || false 
+                created_at: c.created_at || null
             })),
-            
-            // FILES: Προσθέτουμε το is_new (ΑΥΤΟ ΕΛΕΙΠΕ!)
             files: projectFiles.map(f => ({
                 name: f.name,
                 size: f.size,
-                created_at: f.created_at || null,
-                is_new: f.is_new || false // <--- Χωρίς αυτό, το PHP νομίζει ότι όλα είναι παλιά
+                created_at: f.created_at || null
             }))
         };
 
@@ -1656,12 +1652,8 @@
 
             if (result.success) {
                 closeModal();
-                // Ανανέωση Dashboard
-                await loadDashboardData(); 
+                await loadProjects();
                 
-                // Καθαρισμός flags
-                projectFiles.forEach(f => f.is_new = false);
-                projectComments.forEach(c => c.is_new = false);
             } else {
                 alert('Error saving project: ' + (result.error || 'Unknown error'));
             }

@@ -130,7 +130,8 @@ if ($action === 'saveProject') {
         
         $conn->query("INSERT INTO project_comments (project_id, author, comment_text, comment_date, created_at) VALUES ($projectId, '$author', '$text', '$cDate', $createdVal)");
 
-        if (isset($comment['is_new']) && $comment['is_new'] == true) {
+        $is_new = !isset($comment['created_at']) || empty($comment['created_at']);
+        if ($is_new) {
             $stmt = $conn->prepare("INSERT INTO notifications (title, message, link, type) VALUES (?, ?, ?, 'comment')");
             $nTitle = "New Comment";
             $nMsg = "$author commented on '$name'";
@@ -139,8 +140,14 @@ if ($action === 'saveProject') {
             $stmt->execute();
         }
     }
+
+
+ 
     
-   
+    // 1. Αρχικοποίηση λίστας για τα ονόματα των ΝΕΩΝ αρχείων
+    $newFileNames = [];
+
+    // 2. Εισαγωγή αρχείων στη βάση και έλεγχος is_new
     foreach ($files as $file) {
         $fname = $conn->real_escape_string($file['name']);
         $fsize = $conn->real_escape_string($file['size']);
@@ -151,25 +158,38 @@ if ($action === 'saveProject') {
             $createdVal = "'$safeDate'";
         }
         
-        
+        // Εισαγωγή στη βάση
         $conn->query("INSERT INTO project_files (project_id, filename, filesize, created_at) VALUES ($projectId, '$fname', '$fsize', $createdVal)");
+
+        // Αν το αρχείο έχει σημαία is_new = true, το προσθέτουμε στη λίστα για ειδοποίηση
+        $is_new = !isset($file['created_at']) || empty($file['created_at']);
+        if ($is_new) {
+            $newFileNames[] = $file['name'];
+        }
     }
 
-    
-    if (!empty($files)) {
-        $fileCount = count($files);
-        $fileNames = array_map(function($f) { return $f['name']; }, $files);
-        $filesList = implode(', ', array_slice($fileNames, 0, 2));
-        $moreText = count($fileNames) > 2 ? ' + ' . (count($fileNames) - 2) . ' more' : '';
+    // 3. Αποστολή ειδοποίησης ΜΟΝΟ αν βρέθηκαν νέα αρχεία
+    if (!empty($newFileNames)) {
+        $fileCount = count($newFileNames);
+        
+        // Φτιάχνουμε το κείμενο (π.χ. "file1.jpg, file2.pdf")
+        $filesList = implode(', ', array_slice($newFileNames, 0, 2));
+        $moreText = $fileCount > 2 ? ' + ' . ($fileCount - 2) . ' more' : '';
         
         $stmt = $conn->prepare("INSERT INTO notifications (title, message, link, type) VALUES (?, ?, ?, 'file')");
         $nTitle = "Files Uploaded";
-        $nMsg = "Uploaded $fileCount file(s): $filesList$moreText to project '$name'.";
+        $nMsg = "Uploaded $fileCount new file(s): $filesList$moreText to project '$name'.";
         $nLink = "project.php";
-        $stmt->bind_param("sss", $nTitle, $nMsg, $nLink);
-        $stmt->execute();
-        $stmt->close();
+        
+        if ($stmt) {
+            $stmt->bind_param("sss", $nTitle, $nMsg, $nLink);
+            $stmt->execute();
+            $stmt->close();
+        }
     }
+    
+    // --- ΤΕΛΟΣ ΑΝΤΙΚΑΤΑΣΤΑΣΗΣ ---
+
         
     echo json_encode(['success' => true, 'id' => $projectId]);
     exit;
